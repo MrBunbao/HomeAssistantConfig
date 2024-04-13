@@ -1,0 +1,120 @@
+# Loads default set of integrations. Do not remove.
+default_config:
+
+# Load frontend themes from the themes folder
+frontend:
+  themes: !include_dir_merge_named themes
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+# Everything below this was added by myself #
+
+# Enable HTML5 Push Notifications
+# https://www.home-assistant.io/integrations/html5
+notify:
+  - platform: html5
+    vapid_pub_key: !secret html5_valid_pub_key
+    vapid_prv_key: !secret html5_vapid_prv_key
+    vapid_email: !secret html5_vapid_email
+
+# Add the ability to add to the sidebar
+panel_custom:
+  # integrations
+  - name: integrations
+    sidebar_title: Integrations
+    sidebar_icon: mdi:cog-outline
+    js_url: /api/hassio/app/entrypoint.js
+    url_path: "config/integrations"
+    embed_iframe: true
+    require_admin: true
+    config:
+      ingress: core_configurator
+  # automations
+  - name: automations
+    sidebar_title: Automations
+    sidebar_icon: mdi:arrow-decision
+    js_url: /api/hassio/app/entrypoint.js
+    url_path: "config/automation/dashboard"
+    embed_iframe: true
+    require_admin: true
+    config:
+      ingress: core_configurator
+  # updates
+  - name: updates
+    sidebar_title: Updates
+    sidebar_icon: mdi:update
+    js_url: /api/hassio/app/entrypoint.js
+    url_path: "config/updates"
+    embed_iframe: true
+    require_admin: true
+    config:
+      ingress: core_configurator
+
+  # Restart Sidebar Panel
+  - name: ha_restart
+    sidebar_title: Restart
+    sidebar_icon: mdi:restart
+    js_url: /api/hassio/app/entrypoint.js
+    url_path: "developer-tools/yaml?shouldRestart=1"
+    embed_iframe: true
+    require_admin: true
+    config:
+      ingress:
+        core_configurator
+
+        # Entities Sidebar Panel
+  - name: panel_entities
+    sidebar_title: Entities
+    sidebar_icon: mdi:monitor-cellphone-star
+    url_path: "config/entities"
+    module_url: /api/hassio/app/entrypoint.js
+    embed_iframe: true
+    require_admin:
+      true
+
+      # Addons Sidebar Panel
+  - name: panel_addons
+    sidebar_title: Addons
+    sidebar_icon: mdi:checkbox-blank-badge
+    url_path: "hassio/store"
+    module_url: /api/hassio/app/entrypoint.js
+    embed_iframe: true
+    require_admin:
+      true
+
+      # Services Sidebar Panel
+  - name: panel_services
+    sidebar_title: Services
+    sidebar_icon: mdi:toolbox-outline
+    url_path: "developer-tools/service"
+    module_url: /api/hassio/app/entrypoint.js
+    embed_iframe: true
+    require_admin:
+      true
+
+      # Developer States
+  - name: panel_devtoolstate
+    sidebar_title: Dev Tools States
+    sidebar_icon: mdi:toolbox-outline
+    url_path: "developer-tools/state"
+    module_url: /api/hassio/app/entrypoint.js
+    embed_iframe: true
+    require_admin: true
+
+input_boolean:
+
+wake_on_lan:
+
+# Example configuration.yaml entry
+switch:
+  - platform: wake_on_lan
+    mac: !secret wakeonlan_andyspc_mac
+    host: !secret wakeonlan_andyspc_hostip
+    name: "AndyHomePC"
+
+# HTTP
+# Stop weird login errors
+# https://www.home-assistant.io/integrations/http/
+http:
+  ip_ban_enabled: false

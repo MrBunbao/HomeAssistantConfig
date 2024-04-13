@@ -1,0 +1,311 @@
+- id: '1707880928591'
+  alias: Andy - Driving Flag Turn OFF
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - device_tracker.andys_iphone_icv3
+    to: home
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+  condition:
+  - condition: state
+    entity_id: input_boolean.andy_driving_flag
+    state: 'on'
+  action:
+  - service: input_boolean.turn_off
+    target:
+      entity_id:
+      - input_boolean.andy_driving_flag
+      device_id: []
+      area_id: []
+    data: {}
+  mode: single
+- id: '1707881038946'
+  alias: Andy - Driving Flag Turn ON
+  trigger:
+  - platform: template
+    value_template: '{{states("sensor.andys_iphone_icv3_zone_distance") | float >
+      2}}'
+  condition:
+  - condition: state
+    entity_id: input_boolean.andy_far_away_flag
+    state: 'off'
+  action:
+  - service: input_boolean.turn_on
+    data: {}
+    target:
+      entity_id: input_boolean.andy_driving_flag
+  mode: single
+- id: '1707881097642'
+  alias: Andy - Far Away Flag, Turn OFF
+  description: ''
+  trigger:
+  - platform: template
+    value_template: '{{states("sensor.andys_iphone_icv3_zone_distance") | float <=
+      5}}'
+  condition:
+  - condition: state
+    entity_id: sensor.andys_iphone_icloud3_v3_zone_distance
+    attribute: from_zone
+    state: home
+    alias: Confirm Andy ZoneDistance:FromZone is home
+    enabled: false
+  - condition: state
+    entity_id: input_boolean.andy_far_away_flag
+    state: 'on'
+  action:
+  - alias: 'Andy Far Away Flag: Turn off'
+    service: input_boolean.turn_off
+    data: {}
+    target:
+      entity_id:
+      - input_boolean.andy_far_away_flag
+  mode: single
+- id: '1707881121463'
+  alias: Andy - Far Away Flag, Turn ON
+  description: ''
+  trigger:
+  - platform: template
+    value_template: '{{states("sensor.andys_iphone_icv3_zone_distance") | float >
+      5}}'
+  condition:
+  - condition: state
+    entity_id: input_boolean.andy_far_away_flag
+    state: 'off'
+  action:
+  - alias: 'Andy Far Away Flag: Turn on'
+    service: input_boolean.turn_on
+    data: {}
+    target:
+      entity_id:
+      - input_boolean.andy_far_away_flag
+  mode: single
+- id: '1707881189661'
+  alias: Andy - Open Garage when Arriving Home
+  description: Open Garage when Arriving Home
+  trigger:
+  - platform: template
+    value_template: '{{states("sensor.andys_iphone_icv3_zone_distance")  | float <=
+      0.20}}'
+  - platform: state
+    entity_id:
+    - sensor.andys_iphone_icv3_zone_name
+    to: Home
+  condition:
+  - condition: state
+    entity_id: input_boolean.andy_driving_flag
+    state: 'on'
+  - condition: not
+    conditions:
+    - condition: time
+      after: '23:00:00'
+      before: 06:00:00
+      weekday:
+      - sun
+      - mon
+      - tue
+      - wed
+      - thu
+      - fri
+      - sat
+    alias: Make sure it is not between 11pm - 6am
+  action:
+  - service: cover.open_cover
+    data: {}
+    target:
+      entity_id: cover.meross_msg100_garage
+  - service: notify.mobile_app_andys_iphone
+    data:
+      title: 'Welcome home my Home from another... well you get the idea. '
+      message: Come in my homie.
+  mode: single
+- id: '1707881250652'
+  alias: HA - Started Flag, Set
+  description: ''
+  trigger:
+  - platform: homeassistant
+    event: start
+  action:
+  - delay: 00:00:20
+  - service: input_boolean.turn_on
+    entity_id: input_boolean.ha_started_flag
+  mode: single
+- id: '1709904756835'
+  alias: Master Bedroom Hue Dimmer - On Off Bedroom Fairy Lights
+  description: ''
+  trigger:
+  - device_id: 1e8b183e7cce74d22c654caaf42be439
+    domain: hue
+    platform: device
+    type: initial_press
+    subtype: 4
+    unique_id: 6bc37d5e-d740-4639-992a-b0936abbfa85
+  condition: []
+  action:
+  - service: light.toggle
+    metadata: {}
+    data: {}
+    target:
+      entity_id: light.master_bedroom_fairy_lights
+  mode: single
+- id: '1709956366094'
+  alias: Master Bedroom Hue Dimmer Toggle Fairy Lights
+  description: ''
+  trigger:
+  - device_id: 1e8b183e7cce74d22c654caaf42be439
+    domain: hue
+    platform: device
+    type: initial_press
+    subtype: 1
+    unique_id: 04bdc157-8f03-4053-a474-e27caa0cb140
+  condition: []
+  action:
+  - service: light.toggle
+    metadata: {}
+    data: {}
+    target:
+      entity_id:
+      - light.bedroom_hue_aumbiance_bulb_1
+      - light.bedroom_hue_aumbiance_bulb_3
+      - light.bedroom_hue_aumbiance_bulb_2
+  mode: single
+- id: '1709958185505'
+  alias: Hue, Friends Of Hue switch, 4 button, all functions
+  description: ''
+  use_blueprint:
+    path: MrBunbao/hue_dimmer_switch.yaml
+    input:
+      hue-switch-button1:
+      - event.master_bedroom_hue_dimmer_button_1
+      hue-switch-button2:
+      - event.master_bedroom_hue_dimmer_button_2
+      hue-switch-button3:
+      - event.master_bedroom_hue_dimmer_button_3
+      hue-switch-button4:
+      - event.master_bedroom_hue_dimmer_button_4
+- id: '1710001954743'
+  alias: Shannon - Driving Flag Turn OFF
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - device_tracker.shannons_iphone_icv3
+    to: home
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+  condition:
+  - condition: state
+    entity_id: input_boolean.shannon_driving_flag
+    state: 'on'
+  action:
+  - service: input_boolean.turn_off
+    target:
+      device_id: []
+      area_id: []
+      entity_id: input_boolean.shannon_driving_flag
+    data: {}
+  mode: single
+- id: '1710001992963'
+  alias: Shannon - Driving Flag Turn ON
+  description: ''
+  trigger:
+  - platform: template
+    value_template: '{{states("sensor.shannons_iphone_icv3_zone_distance") | float
+      > 2}}'
+  condition:
+  - condition: state
+    entity_id: input_boolean.shannon_far_away_flag
+    state: 'off'
+  action:
+  - service: input_boolean.turn_on
+    data: {}
+    target:
+      entity_id: input_boolean.shannon_driving_flag
+  mode: single
+- id: '1710002020742'
+  alias: Shannon - Far Away Flag, Turn OFF
+  description: ''
+  trigger:
+  - platform: numeric_state
+    entity_id:
+    - sensor.shannons_iphone_icv3_zone_distance
+    below: 5
+  condition:
+  - alias: Confirm Shannon ZoneDistance:FromZone is not home
+    condition: state
+    entity_id: sensor.shannons_iphone_icv3_zone_distance
+    attribute: from_zone
+    state: home
+  action:
+  - service: input_boolean.turn_off
+    alias: 'Shannon Far Away Flag: Turn off'
+    data: {}
+    target:
+      entity_id: input_boolean.shannon_far_away_flag
+  mode: single
+- id: '1710002037808'
+  alias: Shannon - Far Away Flag, Turn ON
+  description: ''
+  trigger:
+  - alias: When Shannon Zone Distance is above 5 mi
+    platform: numeric_state
+    entity_id:
+    - sensor.shannons_iphone_icv3_zone_distance
+    above: 5
+  condition:
+  - alias: Confirm Shannon ZoneDistance:FromZone is not home
+    condition: state
+    entity_id: sensor.shannons_iphone_icv3_zone_distance
+    attribute: from_zone
+    state: home
+  action:
+  - service: input_boolean.turn_on
+    alias: 'Shannon Far Away Flag: Turn on'
+    data: {}
+    target:
+      entity_id: input_boolean.shannon_far_away_flag
+  mode: single
+- id: '1710002048192'
+  alias: Shannon - Open Garage when Arriving Home
+  description: ''
+  trigger:
+  - platform: template
+    value_template: '{{states("sensor.shannons_iphone_icv3_zone_distance")  | float
+      <= 0.20}}'
+  - platform: state
+    entity_id:
+    - sensor.shannons_iphone_icv3_zone_name
+    to: Home
+  condition:
+  - condition: state
+    entity_id: input_boolean.shannon_driving_flag
+    state: 'on'
+  - condition: not
+    conditions:
+    - condition: time
+      after: '23:00:00'
+      before: 06:00:00
+      weekday:
+      - sun
+      - mon
+      - tue
+      - wed
+      - thu
+      - fri
+      - sat
+    alias: Make sure it is not between 11pm - 6am
+  action:
+  - service: cover.open_cover
+    data: {}
+    target:
+      entity_id: cover.meross_msg100_garage
+  - service: notify.mobile_app_shannons_iphone
+    data:
+      title: Hellllllo Honey
+      message: IT'S ALMOST YOUR BDAY
+  mode: single
