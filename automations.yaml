@@ -47,12 +47,12 @@
     value_template: '{{states("sensor.andys_iphone_icv3_zone_distance") | float <=
       5}}'
   condition:
-  - condition: state
-    entity_id: sensor.andys_iphone_icloud3_v3_zone_distance
+  - alias: Confirm Andy ZoneDistance:FromZone is home
+    condition: state
+    entity_id: sensor.andys_iphone_icv3_zone_distance
     attribute: from_zone
     state: home
-    alias: Confirm Andy ZoneDistance:FromZone is home
-    enabled: false
+    enabled: true
   - condition: state
     entity_id: input_boolean.andy_far_away_flag
     state: 'on'
@@ -89,7 +89,7 @@
   trigger:
   - platform: template
     value_template: '{{states("sensor.andys_iphone_icv3_zone_distance")  | float <=
-      0.20}}'
+      0.10}}'
   - platform: state
     entity_id:
     - sensor.andys_iphone_icv3_zone_name
@@ -98,11 +98,12 @@
   - condition: state
     entity_id: input_boolean.andy_driving_flag
     state: 'on'
-  - condition: not
-    conditions:
+  action:
+  - alias: execute automation depending if the time is not between 11pm - 7am
+    if:
     - condition: time
       after: '23:00:00'
-      before: 06:00:00
+      before: 07:00:00
       weekday:
       - sun
       - mon
@@ -111,16 +112,27 @@
       - thu
       - fri
       - sat
-    alias: Make sure it is not between 11pm - 6am
-  action:
-  - service: cover.open_cover
-    data: {}
-    target:
-      entity_id: cover.meross_msg100_garage
-  - service: notify.mobile_app_andys_iphone
-    data:
-      title: 'Welcome home my Home from another... well you get the idea. '
-      message: Come in my homie.
+    then:
+    - device_id: f5effe907501e33a98f058e89b009470
+      domain: mobile_app
+      type: notify
+      message: Oi mate, it's a bit late and I wanted to make sure this doesn't run
+        late at night on accident. Please open your garage manually.
+      title: Just making sure!
+      alias: Message Andy it's late to run the automation
+    else:
+    - alias: Send a message to Andy's phone via HA App
+      data:
+        title: Welcome home my Home from another... well you get the idea. Meditate
+          - One love yo
+        message: Come in my homie.
+      action: notify.mobile_app_andys_iphone
+    - alias: Open Garage
+      data: {}
+      enabled: true
+      action: cover.open_cover
+      target:
+        entity_id: cover.garage_meross
   mode: single
 - id: '1707881250652'
   alias: HA - Started Flag, Set
@@ -270,13 +282,13 @@
     target:
       entity_id: input_boolean.shannon_far_away_flag
   mode: single
-- id: '1710002048192'
+- id: '1714975183505'
   alias: Shannon - Open Garage when Arriving Home
-  description: ''
+  description: Open Garage when Arriving Home
   trigger:
   - platform: template
     value_template: '{{states("sensor.shannons_iphone_icv3_zone_distance")  | float
-      <= 0.20}}'
+      <= 0.10}}'
   - platform: state
     entity_id:
     - sensor.shannons_iphone_icv3_zone_name
@@ -285,11 +297,12 @@
   - condition: state
     entity_id: input_boolean.shannon_driving_flag
     state: 'on'
-  - condition: not
-    conditions:
+  action:
+  - alias: execute automation depending if the time is not between 11pm - 7am
+    if:
     - condition: time
       after: '23:00:00'
-      before: 06:00:00
+      before: 07:00:00
       weekday:
       - sun
       - mon
@@ -298,14 +311,159 @@
       - thu
       - fri
       - sat
-    alias: Make sure it is not between 11pm - 6am
+    then:
+    - alias: Message Baby's - it's late to run the automation
+      device_id: ea43a98b40abfb7c7c331ee5be5f2710
+      domain: mobile_app
+      type: notify
+      title: It's late
+      message: Sorry honey, can't open the garage just in case since it's late. Love
+        you!
+    else:
+    - alias: Send a message to Baby's phone via HA App
+      data:
+        title: Welcome Home, Honey <3
+        message: I LOOOOOVE YOU. WE GOING TO DISNEY SOON!
+      action: notify.mobile_app_shannons_iphone
+    - alias: Open Garage
+      data: {}
+      enabled: true
+      action: cover.open_cover
+      target:
+        entity_id: cover.garage_meross
+  mode: single
+- id: '1715035793795'
+  alias: Wash Done!
+  description: ''
+  use_blueprint:
+    path: Blackshome/appliance-notifications.yaml
+    input:
+      power_sensor: sensor.washer_machine_power
+      start_time_delay: 0.25
+      running_dead_zone: 3
+      include_start_notify: enable_start_notify_options
+      start_notify_device:
+      - f5effe907501e33a98f058e89b009470
+      - ea43a98b40abfb7c7c331ee5be5f2710
+      start_title: QUICK QUACK CLOTHES WASH HAS STARTED
+      include_end_notify: enable_end_notify_options
+      end_notify_device:
+      - f5effe907501e33a98f058e89b009470
+      - ea43a98b40abfb7c7c331ee5be5f2710
+      end_message_title: Wash DONE!
+      include_power_tracking: disable_power_tracking
+      include_custom_actions: []
+      end_custom_actions:
+      - service: light.toggle
+        metadata: {}
+        data:
+          rgb_color:
+          - 235
+          - 77
+          - 61
+          flash: long
+        target:
+          entity_id:
+          - light.kitchen_chandelier
+          - light.hue_play_bars
+        enabled: false
+      - service: tts.speak
+        metadata: {}
+        data:
+          cache: true
+          media_player_entity_id: media_player.kitchen_homepod_mini
+          message: WASH DONE. Get your clothes before you leave it in the washer for
+            the next 3 days.
+        target:
+          entity_id: tts.piper
+        enabled: false
+      start_appliance_power: 6
+      end_appliance_power: 3
+      start_custom_actions:
+      - type: turn_on
+        device_id: 76790cb9994d928fd1fbab5de7a9b4d9
+        entity_id: a395d78db5e910af1ca4ab29bb049eff
+        domain: remote
+        enabled: false
+      - service: tts.speak
+        metadata: {}
+        data:
+          cache: true
+          media_player_entity_id: media_player.kitchen_homepod_mini
+          message: Your washer has ran. AWAY. Haha.
+        target:
+          entity_id: tts.piper
+        enabled: false
+      start_message: 'YES! Another load is IN! I’ll let you know when it’s finished
+        - hopefully. I’m forgetful sometimes. '
+      end_message: Yippee the washing machine is finished! Remember to put yourself
+        in Drive, from Neutral!
+      weekday_options:
+      - mon
+      - tue
+      - wed
+      - thu
+      - fri
+      - sun
+      - sat
+- id: '1723069513540'
+  alias: Tag Secret Garage Andy is scanned
+  description: ''
+  trigger:
+  - platform: tag
+    tag_id: 5815a76f-692f-4ca4-acf9-44f221a57319
+    id: ios.action_fired
+  condition: []
   action:
-  - service: cover.open_cover
+  - action: cover.toggle
+    metadata: {}
     data: {}
     target:
-      entity_id: cover.meross_msg100_garage
-  - service: notify.mobile_app_shannons_iphone
+      entity_id: cover.garage_meross
+    enabled: false
+  - action: notify.mobile_app_andys_iphone
+    metadata: {}
     data:
-      title: Hellllllo Honey
-      message: IT'S ALMOST YOUR BDAY
+      title: Test
+  mode: single
+- id: '1723079758342'
+  alias: 'Garage Shortcut iOS '
+  description: ''
+  trigger:
+  - event_type: ios.action_fired
+    event_data:
+      actionID: 713801B2-612E-461F-9E6A-988E54199C6F
+    platform: event
+  condition: []
+  action:
+  - action: cover.toggle
+    metadata: {}
+    data: {}
+    target:
+      entity_id: cover.msg100_51a3_garage_door
+  mode: single
+- id: '1723165344719'
+  alias: Garage Door Left Open Alert
+  description: ''
+  trigger:
+  - platform: device
+    device_id: ed97359f0b06e9f5a1572f3e870e0475
+    domain: cover
+    entity_id: 70e145bf10512e79c2159193e367513e
+    type: opened
+    for:
+      hours: 0
+      minutes: 30
+      seconds: 0
+  condition: []
+  action:
+  - action: notify.mobile_app_andys_iphone
+    metadata: {}
+    data:
+      message: The garage has been opened for at least 30 mins. You good?
+      title: Garage Has Been Left Opened?
+  - action: notify.mobile_app_shannons_iphone
+    data:
+      message: The garage has been opened for at least 30 mins. You good?
+      title: Garage Has Been Left Opened? Also I love you. Hehe
   mode: single
