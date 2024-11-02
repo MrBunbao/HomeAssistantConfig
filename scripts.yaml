@@ -1,0 +1,15 @@
+text_shannon_questions:
+  alias: Text Shannon questions
+  use_blueprint:
+    path: homeassistant/confirmable_notification.yaml
+    input:
+      notify_device: ea43a98b40abfb7c7c331ee5be5f2710
+      title: Genie here, answer this
+      message: Do you love Andy?
+      confirm_text: Confirmed!
+      dismiss_action:
+      - action: notify.mobile_app_shannons_iphone
+        metadata: {}
+        data:
+          message: Sad
+  description: ''
