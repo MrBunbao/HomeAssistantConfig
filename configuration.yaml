@@ -10,14 +10,6 @@ script: !include scripts.yaml
 scene: !include scenes.yaml
 # Everything below this was added by myself #
 
-# Enable HTML5 Push Notifications
-# https://www.home-assistant.io/integrations/html5
-notify:
-  - platform: html5
-    vapid_pub_key: !secret html5_valid_pub_key
-    vapid_prv_key: !secret html5_vapid_prv_key
-    vapid_email: !secret html5_vapid_email
-
 # Add the ability to add to the sidebar
 panel_custom:
   # integrations

@@ -25,114 +25,63 @@
   mode: single
 - id: '1707881038946'
   alias: Andy - Driving Flag Turn ON
-  trigger:
-  - platform: template
-    value_template: '{{states("sensor.andys_iphone_icv3_zone_distance") | float >
+  triggers:
+  - value_template: '{{states("sensor.andys_iphone_icv3_zone_distance") | float >
       2}}'
-  condition:
+    trigger: template
+  conditions:
   - condition: state
     entity_id: input_boolean.andy_far_away_flag
     state: 'off'
-  action:
-  - service: input_boolean.turn_on
-    data: {}
+  actions:
+  - data: {}
     target:
       entity_id: input_boolean.andy_driving_flag
+    action: input_boolean.turn_on
   mode: single
 - id: '1707881097642'
   alias: Andy - Far Away Flag, Turn OFF
   description: ''
-  trigger:
-  - platform: template
-    value_template: '{{states("sensor.andys_iphone_icv3_zone_distance") | float <=
+  triggers:
+  - value_template: '{{states("sensor.andys_iphone_icv3_zone_distance") | float <=
       5}}'
-  condition:
+    trigger: template
+  conditions:
   - alias: Confirm Andy ZoneDistance:FromZone is home
     condition: state
-    entity_id: sensor.andys_iphone_icv3_zone_distance
+    entity_id: device_tracker.andys_iphone_icv3
     attribute: from_zone
     state: home
     enabled: true
   - condition: state
     entity_id: input_boolean.andy_far_away_flag
     state: 'on'
-  action:
+  actions:
   - alias: 'Andy Far Away Flag: Turn off'
-    service: input_boolean.turn_off
     data: {}
     target:
       entity_id:
       - input_boolean.andy_far_away_flag
+    action: input_boolean.turn_off
   mode: single
 - id: '1707881121463'
   alias: Andy - Far Away Flag, Turn ON
   description: ''
-  trigger:
-  - platform: template
-    value_template: '{{states("sensor.andys_iphone_icv3_zone_distance") | float >
+  triggers:
+  - value_template: '{{states("sensor.andys_iphone_icv3_zone_distance") | float >
       5}}'
-  condition:
+    trigger: template
+  conditions:
   - condition: state
     entity_id: input_boolean.andy_far_away_flag
     state: 'off'
-  action:
+  actions:
   - alias: 'Andy Far Away Flag: Turn on'
-    service: input_boolean.turn_on
     data: {}
     target:
       entity_id:
       - input_boolean.andy_far_away_flag
-  mode: single
-- id: '1707881189661'
-  alias: Andy - Open Garage when Arriving Home
-  description: Open Garage when Arriving Home
-  trigger:
-  - platform: template
-    value_template: '{{states("sensor.andys_iphone_icv3_zone_distance")  | float <=
-      0.10}}'
-  - platform: state
-    entity_id:
-    - sensor.andys_iphone_icv3_zone_name
-    to: Home
-  condition:
-  - condition: state
-    entity_id: input_boolean.andy_driving_flag
-    state: 'on'
-  action:
-  - alias: execute automation depending if the time is not between 11pm - 7am
-    if:
-    - condition: time
-      after: '23:00:00'
-      before: 07:00:00
-      weekday:
-      - sun
-      - mon
-      - tue
-      - wed
-      - thu
-      - fri
-      - sat
-    then:
-    - device_id: f5effe907501e33a98f058e89b009470
-      domain: mobile_app
-      type: notify
-      message: Oi mate, it's a bit late and I wanted to make sure this doesn't run
-        late at night on accident. Please open your garage manually.
-      title: Just making sure!
-      alias: Message Andy it's late to run the automation
-    else:
-    - alias: Send a message to Andy's phone via HA App
-      data:
-        title: Welcome home my Home from another... well you get the idea. Meditate
-          - One love yo
-        message: Come in my homie.
-      action: notify.mobile_app_andys_iphone
-    - alias: Open Garage
-      data: {}
-      enabled: true
-      action: cover.open_cover
-      target:
-        entity_id: cover.msg100_51a3_garage_door
+    action: input_boolean.turn_on
   mode: single
 - id: '1707881250652'
   alias: HA - Started Flag, Set
@@ -225,32 +174,32 @@
 - id: '1710001992963'
   alias: Shannon - Driving Flag Turn ON
   description: ''
-  trigger:
-  - platform: template
-    value_template: '{{states("sensor.shannons_iphone_icv3_zone_distance") | float
+  triggers:
+  - value_template: '{{states("sensor.shannons_iphone_icv3_zone_distance") | float
       > 2}}'
-  condition:
+    trigger: template
+  conditions:
   - condition: state
     entity_id: input_boolean.shannon_far_away_flag
     state: 'off'
-  action:
-  - service: input_boolean.turn_on
-    data: {}
+  actions:
+  - data: {}
     target:
       entity_id: input_boolean.shannon_driving_flag
+    action: input_boolean.turn_on
   mode: single
 - id: '1710002020742'
   alias: Shannon - Far Away Flag, Turn OFF
   description: ''
   triggers:
   - entity_id:
-    - sensor.shannons_iphone_icv3_zone_distance_3
+    - sensor.shannons_iphone_icv3_zone_distance
     below: 5
     trigger: numeric_state
   conditions:
   - alias: Confirm Shannon ZoneDistance:FromZone is not home
     condition: state
-    entity_id: sensor.shannons_iphone_icv3_zone_distance_3
+    entity_id: sensor.shannons_iphone_icv3_zone_distance
     attribute: from_zone
     state: home
   actions:
@@ -266,13 +215,13 @@
   triggers:
   - alias: When Shannon Zone Distance is above 5 mi
     entity_id:
-    - sensor.shannons_iphone_icv3_zone_distance_3
+    - sensor.shannons_iphone_icv3_zone_distance
     above: 5
     trigger: numeric_state
   conditions:
   - alias: Confirm Shannon ZoneDistance:FromZone is not home
     condition: state
-    entity_id: sensor.shannons_iphone_icv3_zone_distance_3
+    entity_id: sensor.shannons_iphone_icv3_zone_distance
     attribute: from_zone
     state: home
   actions:
@@ -286,11 +235,11 @@
   alias: Shannon - Open Garage when Arriving Home
   description: Open Garage when Arriving Home
   triggers:
-  - value_template: '{{states("sensor.shannons_iphone_icv3_zone_distance_3")  | float
+  - value_template: '{{states("sensor.shannons_iphone_icv3_zone_distance")  | float
       <= 0.10}}'
     trigger: template
   - entity_id:
-    - sensor.shannons_iphone_icv3_zone_name_3
+    - sensor.shannons_iphone_icv3_zone_name
     to: Home
     trigger: state
   conditions:
@@ -322,90 +271,16 @@
     else:
     - alias: Send a message to Baby's phone via HA App
       data:
-        title: Welcome Home, Honey <3
-        message: Moo moo, I love you Boo.
+        title: Welcome Home, Baby *Insert Heart Here*
+        message: BECAUSE IT'S FUCKIN HOT OUT, GET INSIDE BIZNATCH
       action: notify.mobile_app_shannons_iphone
     - alias: Open Garage
       data: {}
       enabled: true
       action: cover.open_cover
       target:
-        entity_id: cover.msg100_51a3_garage_door
+        entity_id: cover.smart_garage_door_2310087254725461070248e1e9dd51a3_garage
   mode: single
-- id: '1715035793795'
-  alias: Wash Done!
-  description: ''
-  use_blueprint:
-    path: Blackshome/appliance-notifications.yaml
-    input:
-      power_sensor: sensor.washer_machine_power
-      start_time_delay: 0.25
-      running_dead_zone: 3
-      include_start_notify: enable_start_notify_options
-      start_notify_device:
-      - f5effe907501e33a98f058e89b009470
-      - ea43a98b40abfb7c7c331ee5be5f2710
-      start_title: QUICK QUACK CLOTHES WASH HAS STARTED
-      include_end_notify: enable_end_notify_options
-      end_notify_device:
-      - f5effe907501e33a98f058e89b009470
-      - ea43a98b40abfb7c7c331ee5be5f2710
-      end_message_title: Wash DONE!
-      include_power_tracking: disable_power_tracking
-      include_custom_actions: []
-      end_custom_actions:
-      - service: light.toggle
-        metadata: {}
-        data:
-          rgb_color:
-          - 235
-          - 77
-          - 61
-          flash: long
-        target:
-          entity_id:
-          - light.kitchen_chandelier
-          - light.hue_play_bars
-        enabled: false
-      - service: tts.speak
-        metadata: {}
-        data:
-          cache: true
-          media_player_entity_id: media_player.kitchen_homepod_mini
-          message: WASH DONE. Get your clothes before you leave it in the washer for
-            the next 3 days.
-        target:
-          entity_id: tts.piper
-        enabled: false
-      start_appliance_power: 6
-      end_appliance_power: 3
-      start_custom_actions:
-      - type: turn_on
-        device_id: 76790cb9994d928fd1fbab5de7a9b4d9
-        entity_id: a395d78db5e910af1ca4ab29bb049eff
-        domain: remote
-        enabled: false
-      - service: tts.speak
-        metadata: {}
-        data:
-          cache: true
-          media_player_entity_id: media_player.kitchen_homepod_mini
-          message: Your washer has ran. AWAY. Haha.
-        target:
-          entity_id: tts.piper
-        enabled: false
-      start_message: 'YES! Another load is IN! I’ll let you know when it’s finished
-        - hopefully. I’m forgetful sometimes. '
-      end_message: Yippee the washing machine is finished! Remember to put yourself
-        in Drive, from Neutral!
-      weekday_options:
-      - mon
-      - tue
-      - wed
-      - thu
-      - fri
-      - sun
-      - sat
 - id: '1723593329994'
   alias: 'ANDY - DINNER TIME '
   description: ''
@@ -482,4 +357,133 @@
       minutes: 0
       seconds: 2
       milliseconds: 0
+  mode: single
+- id: '1733564190781'
+  alias: Andy - Open Garage when Arriving Home
+  description: Open Garage when Arriving Home
+  triggers:
+  - value_template: '{{states("sensor.andys_iphone_icv3_zone_distance")  | float <=
+      0.10}}'
+    trigger: template
+  - entity_id:
+    - device_tracker.andys_iphone_icv3
+    to: Home
+    trigger: state
+  conditions:
+  - condition: state
+    entity_id: input_boolean.andy_driving_flag
+    state: 'on'
+  actions:
+  - alias: execute automation depending if the time is not between 11pm - 7am
+    if:
+    - condition: time
+      after: '23:00:00'
+      before: 07:00:00
+      weekday:
+      - sun
+      - mon
+      - tue
+      - wed
+      - thu
+      - fri
+      - sat
+    then:
+    - device_id: 9ffefedebce49dc943091010a84fcfce
+      domain: mobile_app
+      type: notify
+      message: YO - ITS LATE - ABORT GARAGE AUTOMATION. I REPEAT - WE ARE NOT OPENING
+        THE GARAGE AUTOMATICALLY. You're welcome.
+    else:
+    - action: notify.mobile_app_andys_iphone
+      data:
+        title: Hey 5 foot 10 king
+        message: Hope your day was s'well. Get inside my Guy. Mwah.
+    - alias: Open Garage
+      action: cover.open_cover
+      data: {}
+      target:
+        entity_id: cover.smart_garage_door_2310087254725461070248e1e9dd51a3_garage
+  mode: single
+- id: '1750052296229'
+  alias: Washer Machine Cycle Notifier
+  description: ''
+  use_blueprint:
+    path: Blackshome/appliance-notifications.yaml
+    input:
+      power_sensor: sensor.eve_energy_washer_machine_power
+      start_time_delay: 0.25
+      running_dead_zone: 3
+      include_start_notify: enable_start_notify_options
+      start_notify_device:
+      - 9ffefedebce49dc943091010a84fcfce
+      - ea43a98b40abfb7c7c331ee5be5f2710
+      start_title: 'Scrub a dub dub! '
+      include_end_notify: enable_end_notify_options
+      end_notify_device:
+      - 9ffefedebce49dc943091010a84fcfce
+      - ea43a98b40abfb7c7c331ee5be5f2710
+      end_message_title: AYO BEEP BOOP
+      include_power_tracking: enable_power_tracking_and_cost
+      include_custom_actions: []
+      end_custom_actions: []
+      start_appliance_power: 6
+      end_appliance_power: 3
+      start_custom_actions: []
+      start_message: YES! We be cleaning - I'll tap ya when the job is done ;)
+      end_message: The wash cycle is finished. Are you going to let it get smelly
+        again just to waste more water? :)
+      weekday_options:
+      - mon
+      - tue
+      - wed
+      - thu
+      - fri
+      - sun
+      - sat
+      power_consumption_sensor: sensor.eve_energy_washer_machine_power
+      cost_per_kwh: input_number.power_tracker
+      start_power_consumption: input_number.power_tracker
+      end_power_consumption: input_number.power_tracker
+      end_message_kwh: Consumption
+      end_message_cost: Approx Cost $
+- id: '1751242802742'
+  alias: Shannon's Office Reading Lights On by Pico Remote
+  description: ''
+  triggers:
+  - device_id: 7ef3bb24490891c64555021791c7730a
+    domain: lutron_caseta
+    type: press
+    subtype: 'on'
+    trigger: device
+  conditions: []
+  actions:
+  - type: turn_on
+    device_id: 95e09d220d158e1cb2f076a377f2ebd0
+    entity_id: 8c445c1fa80f0db01757c07193ce4908
+    domain: switch
+  - type: turn_on
+    device_id: 9bbc983f70a866521c0b1cb3825ab17f
+    entity_id: e91e3e8d230f054ab01eeca0b26fe6fe
+    domain: light
+    brightness_pct: 80
+  mode: single
+- id: '1751242846123'
+  alias: Shannon's Office Reading Lights Off by Pico Remote
+  description: ''
+  triggers:
+  - device_id: 7ef3bb24490891c64555021791c7730a
+    domain: lutron_caseta
+    type: press
+    subtype: 'off'
+    trigger: device
+  conditions: []
+  actions:
+  - type: turn_off
+    device_id: 95e09d220d158e1cb2f076a377f2ebd0
+    entity_id: 8c445c1fa80f0db01757c07193ce4908
+    domain: switch
+  - type: turn_off
+    device_id: 9bbc983f70a866521c0b1cb3825ab17f
+    entity_id: e91e3e8d230f054ab01eeca0b26fe6fe
+    domain: light
   mode: single
