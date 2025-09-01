@@ -271,8 +271,8 @@
     else:
     - alias: Send a message to Baby's phone via HA App
       data:
-        title: Welcome Home, Baby *Insert Heart Here*
-        message: BECAUSE IT'S FUCKIN HOT OUT, GET INSIDE BIZNATCH
+        title: Heyo, welcome home-y-yo
+        message: I LOOOOVE YOU. I hope your trip was amazing <3.
       action: notify.mobile_app_shannons_iphone
     - alias: Open Garage
       data: {}
@@ -280,83 +280,6 @@
       action: cover.open_cover
       target:
         entity_id: cover.smart_garage_door_2310087254725461070248e1e9dd51a3_garage
-  mode: single
-- id: '1723593329994'
-  alias: 'ANDY - DINNER TIME '
-  description: ''
-  trigger:
-  - platform: state
-    entity_id:
-    - input_boolean.andy_din_din_button
-    from:
-    to:
-  condition: []
-  action:
-  - action: light.toggle
-    metadata: {}
-    data:
-      rgb_color:
-      - 0
-      - 255
-      - 64
-      brightness_pct: 100
-    target:
-      entity_id: light.light_panels_53_e6_7d
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 2
-      milliseconds: 0
-  - action: light.turn_off
-    target:
-      entity_id:
-      - light.light_panels_53_e6_7d
-    data: {}
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 2
-      milliseconds: 0
-  - action: light.toggle
-    metadata: {}
-    data:
-      rgb_color:
-      - 0
-      - 255
-      - 64
-      brightness_pct: 100
-    target:
-      entity_id: light.light_panels_53_e6_7d
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 2
-      milliseconds: 0
-  - action: light.turn_off
-    target:
-      entity_id:
-      - light.light_panels_53_e6_7d
-    data: {}
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 2
-      milliseconds: 0
-  - action: light.toggle
-    metadata: {}
-    data:
-      rgb_color:
-      - 0
-      - 255
-      - 64
-      brightness_pct: 100
-    target:
-      entity_id: light.light_panels_53_e6_7d
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 2
-      milliseconds: 0
   mode: single
 - id: '1733564190781'
   alias: Andy - Open Garage when Arriving Home
@@ -405,33 +328,48 @@
         entity_id: cover.smart_garage_door_2310087254725461070248e1e9dd51a3_garage
   mode: single
 - id: '1750052296229'
-  alias: Washer Machine Cycle Notifier
+  alias: Laundry Washer Machine Cycle Notifier
   description: ''
   use_blueprint:
     path: Blackshome/appliance-notifications.yaml
     input:
-      power_sensor: sensor.eve_energy_washer_machine_power
+      power_sensor: sensor.laundry_room_eve_energy_washer_machine_power
       start_time_delay: 0.25
       running_dead_zone: 3
       include_start_notify: enable_start_notify_options
       start_notify_device:
       - 9ffefedebce49dc943091010a84fcfce
       - ea43a98b40abfb7c7c331ee5be5f2710
-      start_title: 'Scrub a dub dub! '
+      start_title: Washing Cycle has STARTED!
       include_end_notify: enable_end_notify_options
       end_notify_device:
       - 9ffefedebce49dc943091010a84fcfce
       - ea43a98b40abfb7c7c331ee5be5f2710
-      end_message_title: AYO BEEP BOOP
-      include_power_tracking: enable_power_tracking_and_cost
-      include_custom_actions: []
-      end_custom_actions: []
-      start_appliance_power: 6
-      end_appliance_power: 3
-      start_custom_actions: []
-      start_message: YES! We be cleaning - I'll tap ya when the job is done ;)
-      end_message: The wash cycle is finished. Are you going to let it get smelly
-        again just to waste more water? :)
+      end_message_title: Washing Cycle is D.O.N.E.
+      include_power_tracking: enable_power_tracking
+      include_custom_actions:
+      - enable_start_custom_actions
+      - enable_end_custom_actions
+      end_custom_actions:
+      - action: tts.cloud_say
+        metadata: {}
+        data:
+          cache: false
+          entity_id: media_player.kitchen_homepod
+          message: Hello there again, if you're the same person. The dryer is done
+            drying your clothes - because that's what it does.
+      start_appliance_power: 5
+      end_appliance_power: 2
+      start_custom_actions:
+      - action: tts.cloud_say
+        metadata: {}
+        data:
+          cache: false
+          entity_id: media_player.kitchen_homepod
+          message: Hello there person in this room. The laundry load is finished,
+            whether that's for you or them, it's washed.
+      start_message: LET'S GET THIS BIZNATCH, CLEANED!
+      end_message: ME CLEAN DON'T LET ME BE SMELLY AGAIN
       weekday_options:
       - mon
       - tue
@@ -440,14 +378,143 @@
       - fri
       - sun
       - sat
-      power_consumption_sensor: sensor.eve_energy_washer_machine_power
-      cost_per_kwh: input_number.power_tracker
-      start_power_consumption: input_number.power_tracker
-      end_power_consumption: input_number.power_tracker
       end_message_kwh: Consumption
-      end_message_cost: Approx Cost $
-- id: '1751242802742'
-  alias: Shannon's Office Reading Lights On by Pico Remote
+- id: '1751321970855'
+  alias: Theatre Hue Dimmer Switch (z2mqtt)
+  description: ''
+  use_blueprint:
+    path: patpac9/Hue_Dimmer_Switch_Easy_Custom_Buttons.yaml
+    input:
+      controller: Theatre Hue Dimmer Switch
+      on_press:
+      - action: scene.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: scene.backyard_backyard_cozy
+      up_pressed:
+      - device_id: 6bbabf5a2980482803d8fb133ec761e9
+        domain: light
+        entity_id: a0a8c449d8ef850d66c168654de9cf11
+        type: brightness_increase
+      off_pressed:
+      - type: turn_off
+        device_id: 6bbabf5a2980482803d8fb133ec761e9
+        entity_id: a0a8c449d8ef850d66c168654de9cf11
+        domain: light
+      on_held: []
+      down_pressed:
+      - device_id: 6bbabf5a2980482803d8fb133ec761e9
+        domain: light
+        entity_id: a0a8c449d8ef850d66c168654de9cf11
+        type: brightness_decrease
+      on_hold_released:
+      - action: scene.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: scene.backyard_all_lights_nighttime
+- id: '1751528749447'
+  alias: Garage OPEN will Turn ON overhead lights
+  description: ''
+  triggers:
+  - device_id: fa6d6dbfca29938f6f219e9b0acdf36f
+    domain: cover
+    entity_id: dfdfd8d11bd28f73ede3d0ed0c72e360
+    type: opening
+    trigger: device
+  conditions: []
+  actions:
+  - type: turn_on
+    device_id: 3eb2dec3896fe4b5002e95a9af0d8dbb
+    entity_id: d1b5ff09dc392c06a3500d76b1fd3295
+    domain: switch
+  mode: single
+- id: '1751773464928'
+  alias: Theatre Lutron Table Switch ON turns MOOD lighting ON
+  description: ''
+  triggers:
+  - device_id: 29d187c39b2d2947fd6dc42d0f5f981e
+    domain: lutron_caseta
+    type: press
+    subtype: 'on'
+    trigger: device
+  conditions: []
+  actions:
+  - action: light.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id:
+      - light.hue_play_bars
+      device_id:
+      - de02cc9d5d25d6357b3eee07c4747e14
+      - 360d8c2266e904a93ad0c83154381279
+      - 23f1312ee87c57fb5d7688e9795e66b3
+      - 35af642478cf1de52a581f744584bc1d
+  mode: single
+- id: '1751773650173'
+  alias: Theatre Lutron Table Switch OFF turns MOOD lighting OFF
+  description: ''
+  triggers:
+  - device_id: 29d187c39b2d2947fd6dc42d0f5f981e
+    domain: lutron_caseta
+    type: press
+    subtype: 'off'
+    trigger: device
+  conditions: []
+  actions:
+  - action: light.turn_off
+    metadata: {}
+    data: {}
+    target:
+      device_id:
+      - 35af642478cf1de52a581f744584bc1d
+      - de02cc9d5d25d6357b3eee07c4747e14
+      - 23f1312ee87c57fb5d7688e9795e66b3
+      - 360d8c2266e904a93ad0c83154381279
+      - fc14d32bd7c4d9ad741c569de761bc76
+  mode: single
+- id: '1751790475765'
+  alias: Andys Office Pico ON turns on Lust scene
+  description: ''
+  triggers:
+  - device_id: b4e7723f2e000344742eb349165469c9
+    domain: lutron_caseta
+    type: press
+    subtype: 'on'
+    metadata: {}
+    trigger: device
+  conditions: []
+  actions:
+  - action: scene.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: scene.andy_s_office_all_lights_lust
+  - type: turn_on
+    device_id: b4611a3714c78953c68a6aab35d6bf76
+    entity_id: c40097c020c562d588e322148a801671
+    domain: switch
+  mode: single
+- id: '1751791108844'
+  alias: Garage CLOSED will Turn OFF  overhead lights
+  description: ''
+  triggers:
+  - device_id: fa6d6dbfca29938f6f219e9b0acdf36f
+    domain: cover
+    entity_id: dfdfd8d11bd28f73ede3d0ed0c72e360
+    type: closing
+    trigger: device
+  conditions: []
+  actions:
+  - type: turn_off
+    device_id: 3eb2dec3896fe4b5002e95a9af0d8dbb
+    entity_id: d1b5ff09dc392c06a3500d76b1fd3295
+    domain: switch
+  mode: single
+- id: '1752094706616'
+  alias: Shannons Office Pico Remote ON
   description: ''
   triggers:
   - device_id: 7ef3bb24490891c64555021791c7730a
@@ -465,10 +532,10 @@
     device_id: 9bbc983f70a866521c0b1cb3825ab17f
     entity_id: e91e3e8d230f054ab01eeca0b26fe6fe
     domain: light
-    brightness_pct: 80
+    brightness_pct: 100
   mode: single
-- id: '1751242846123'
-  alias: Shannon's Office Reading Lights Off by Pico Remote
+- id: '1752094795730'
+  alias: Shannons Office Pico Remote OFF
   description: ''
   triggers:
   - device_id: 7ef3bb24490891c64555021791c7730a
@@ -486,4 +553,440 @@
     device_id: 9bbc983f70a866521c0b1cb3825ab17f
     entity_id: e91e3e8d230f054ab01eeca0b26fe6fe
     domain: light
+  mode: single
+- id: scrypted_advanced_notifier_snooze_action
+  alias: Scrypted advanced notifier snooze action
+  description: Automation auto-generated by the scrypted's plugin Advanced notifier
+    to handle snooze actions
+  triggers:
+  - platform: event
+    event_type: mobile_app_notification_action
+  - platform: event
+    event_type: ios.action_fired
+  conditions:
+  - condition: template
+    value_template: '{{ trigger.event.data.action_name is match(''scrypted_an_snooze_.*'')
+      or trigger.event.data.action is match(''scrypted_an_snooze_.*'') }}'
+  actions:
+  - variables:
+      event_name: '{% if ''action'' in trigger.event.data %}{{ trigger.event.data.action
+        }}{% else %}{{ trigger.event.data.actionName }}{% endif %}'
+      suffix: '{% set prefix = ''scrypted_an_snooze_'' %} {{ event_name[prefix|length:]
+        }}'
+      parts: '{{ suffix.split(''_'') }}'
+      camera_id: '{{ parts[0] }}'
+      notifier_id: '{{ parts[1] }}'
+      snooze_time: '{{ parts[2] }}'
+      remaining_parts: '{{ parts[3:] }}'
+      snooze_id: '{{ remaining_parts | join(''_'') }}'
+  - action: mqtt.publish
+    data:
+      qos: '0'
+      topic: scrypted/scrypted-an-{{ notifier_id }}/snooze/set
+      payload: '{"snoozeId":"{{ snooze_id }}","cameraId":"{{ camera_id }}","snoozeTime":"{{
+        snooze_time}}"}'
+  mode: single
+- id: scrypted_advanced_security_system_alarm_action
+  alias: Scrypted advanced security system alarm action
+  description: Automation auto-generated by the scrypted's plugin Advanced notifier
+    to handle alarm actions
+  triggers:
+  - platform: event
+    event_type: mobile_app_notification_action
+  - platform: event
+    event_type: ios.action_fired
+  conditions:
+  - condition: template
+    value_template: '{{ trigger.event.data.action_name is match(''scrypted_an_alarm_.*'')
+      or trigger.event.data.action is match(''scrypted_an_alarm.*'') }}'
+  actions:
+  - variables:
+      event_name: '{% if ''action'' in trigger.event.data %}{{ trigger.event.data.action
+        }}{% else %}{{ trigger.event.data.actionName }}{% endif %}'
+      suffix: '{% set prefix = ''scrypted_an_alarm_'' %} {{ event_name[prefix|length:]
+        }}'
+      parts: '{{ suffix.split(''_'') }}'
+      mode: '{{ parts[0] }}'
+  - action: mqtt.publish
+    data:
+      qos: '0'
+      topic: scrypted/scrypted-an-alarm-system/alarm-system/set
+      payload: '{{ mode }}'
+  mode: single
+- id: '1753836415174'
+  alias: Kitchen Pantry Light Automation
+  description: ''
+  triggers:
+  - device_id: a780976dcd48186147a26666d05df845
+    domain: hue
+    type: short_release
+    subtype: 1
+    unique_id: b304e373-fd08-4407-8baf-11ebf25317e7
+    trigger: device
+  conditions: []
+  actions:
+  - action: light.toggle
+    metadata: {}
+    data:
+      brightness_pct: 100
+      color_temp_kelvin: 2496
+    target:
+      device_id: 4dff3b94ec08da6ae3b78b3ed9a83b44
+  mode: single
+- id: '1753836585013'
+  alias: Kitchen Pantry Lighting Automations (HUE BUTTON 4)
+  description: ''
+  triggers:
+  - device_id: a780976dcd48186147a26666d05df845
+    domain: hue
+    type: short_release
+    subtype: 4
+    unique_id: 747f0db2-0a6a-42d3-9eaf-6403b08efa15
+    trigger: device
+  conditions: []
+  actions:
+  - action: scene.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: scene.kitchen_all_lights_fireplace_in_the_kitchen
+  mode: single
+- id: '1753837537605'
+  alias: Kitchen Pantry Brightness UP Toggle
+  description: ''
+  triggers:
+  - device_id: a780976dcd48186147a26666d05df845
+    domain: hue
+    type: repeat
+    subtype: 2
+    unique_id: 12565f29-4b2c-45e0-81b9-a5642c7bc8fb
+    trigger: device
+  - device_id: a780976dcd48186147a26666d05df845
+    domain: hue
+    type: initial_press
+    subtype: 2
+    unique_id: 12565f29-4b2c-45e0-81b9-a5642c7bc8fb
+    trigger: device
+  conditions: []
+  actions:
+  - action: light.turn_on
+    metadata: {}
+    data:
+      brightness_step_pct: 25
+    target:
+      entity_id: light.kitchen
+  mode: single
+- id: '1753837625268'
+  alias: Kitchen Pantry Brightness DOWN Toggle
+  description: ''
+  triggers:
+  - device_id: a780976dcd48186147a26666d05df845
+    domain: hue
+    type: repeat
+    subtype: 3
+    unique_id: 18e14cd7-9314-4ab2-9777-a8803c178770
+    trigger: device
+  - device_id: a780976dcd48186147a26666d05df845
+    domain: hue
+    type: initial_press
+    subtype: 3
+    unique_id: 18e14cd7-9314-4ab2-9777-a8803c178770
+    trigger: device
+  conditions: []
+  actions:
+  - action: light.turn_on
+    metadata: {}
+    data:
+      brightness_step_pct: -25
+    target:
+      entity_id: light.kitchen
+  mode: single
+- id: '1754097176789'
+  alias: Kitchen - Aqara Mini Switch Controls Sink Disposal
+  description: ''
+  triggers:
+  - domain: mqtt
+    device_id: 4b88b7ec9cf1e70e721da71aac1993f9
+    type: action
+    subtype: single
+    trigger: device
+  conditions: []
+  actions:
+  - type: toggle
+    device_id: bcff3c708632217a59ebf2ae66acacf8
+    entity_id: 3434271ebaf770cd906d1775ea19168c
+    domain: switch
+  mode: single
+- id: '1754098067597'
+  alias: Kitchen Disposal Safety Plan
+  description: ''
+  triggers:
+  - type: turned_on
+    device_id: bcff3c708632217a59ebf2ae66acacf8
+    entity_id: 3434271ebaf770cd906d1775ea19168c
+    domain: switch
+    trigger: device
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 11
+  conditions: []
+  actions:
+  - type: turn_off
+    device_id: bcff3c708632217a59ebf2ae66acacf8
+    entity_id: 3434271ebaf770cd906d1775ea19168c
+    domain: switch
+  mode: single
+- id: '1754213116276'
+  alias: Andy’s Office Turn Off All Light via Switches
+  description: ''
+  triggers:
+  - type: turned_off
+    device_id: 61d77b8c30cca28a47cf32bc09ac1ad5
+    entity_id: a3c9625cbda210c81f5a2fbfe0d25d6b
+    domain: switch
+    trigger: device
+  - device_id: b4e7723f2e000344742eb349165469c9
+    domain: lutron_caseta
+    type: press
+    subtype: 'off'
+    trigger: device
+  conditions: []
+  actions:
+  - type: turn_off
+    device_id: 0a7e154803404f952e6c9edb9000e2b6
+    entity_id: 0c07dbdd4ab97f79ae3fa61402c3489f
+    domain: light
+  - type: turn_off
+    device_id: b32513797dbe7668e305cf6018ebd3c8
+    entity_id: 00d7a4236205826da53ae28ebb100bf4
+    domain: light
+  - type: turn_off
+    device_id: b4611a3714c78953c68a6aab35d6bf76
+    entity_id: c40097c020c562d588e322148a801671
+    domain: switch
+  - type: turn_off
+    device_id: 65fd2c817e01b5b2e11db9e3b0a4ec37
+    entity_id: fcb0463d2729e6e7220320a70e1cb0a6
+    domain: light
+  mode: single
+- id: '1755380756226'
+  alias: Andys Office Smart Knob - Increase Brightness
+  description: ''
+  triggers:
+  - domain: mqtt
+    device_id: e1eeb2160ec22ebcf33654ea89e3b72a
+    type: action
+    subtype: rotate_right
+    metadata: {}
+    trigger: device
+  conditions: []
+  actions:
+  - device_id: f2081809a03d51241fa17845111c5f7e
+    domain: light
+    entity_id: 78170b7c00a6f12bc4de25bf0af87443
+    type: brightness_increase
+  mode: single
+- id: '1755380796488'
+  alias: Andys Office Smart Knob - Decrease Brightness
+  description: ''
+  triggers:
+  - domain: mqtt
+    device_id: e1eeb2160ec22ebcf33654ea89e3b72a
+    type: action
+    subtype: rotate_left
+    trigger: device
+  conditions: []
+  actions:
+  - device_id: 65fd2c817e01b5b2e11db9e3b0a4ec37
+    domain: light
+    entity_id: fcb0463d2729e6e7220320a70e1cb0a6
+    type: brightness_decrease
+  mode: single
+- id: '1755380838983'
+  alias: Andys Office Smart Knob - Toggle Chaise Light
+  description: ''
+  triggers:
+  - domain: mqtt
+    device_id: e1eeb2160ec22ebcf33654ea89e3b72a
+    type: action
+    subtype: single
+    trigger: device
+  conditions: []
+  actions:
+  - type: toggle
+    device_id: 65fd2c817e01b5b2e11db9e3b0a4ec37
+    entity_id: fcb0463d2729e6e7220320a70e1cb0a6
+    domain: light
+  mode: single
+- id: '1755381671948'
+  alias: Andy's Office Smart Knob - Toggle Scenes (Double Press)
+  description: ''
+  triggers:
+  - domain: mqtt
+    device_id: e1eeb2160ec22ebcf33654ea89e3b72a
+    type: action
+    subtype: double
+    trigger: device
+  conditions: []
+  actions:
+  - action: script.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: script.andy_s_office_scene_toggle
+  mode: single
+- id: '1755383469676'
+  alias: Laundry Room - Dryer Vibration Notification
+  description: ''
+  triggers:
+  - type: vibration
+    device_id: a33919edf879742cf135f75a4b8100d6
+    entity_id: 877e5b15d7a3f0203702b789e3341df3
+    domain: binary_sensor
+    trigger: device
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 35
+  conditions: []
+  actions:
+  - device_id: 9ffefedebce49dc943091010a84fcfce
+    domain: mobile_app
+    type: notify
+    message: I'll let ya know when I'm done shaking.
+    title: Dryer Machine Alert!
+  - device_id: ea43a98b40abfb7c7c331ee5be5f2710
+    domain: mobile_app
+    type: notify
+    message: I'll let ya know when I'm done shaking.
+    title: I'll let ya know when I'm done shaking.
+  mode: single
+- id: '1755385371802'
+  alias: Laundry Room - Vibration Sensor (Stopped) Alert
+  description: ''
+  triggers:
+  - type: no_vibration
+    device_id: a33919edf879742cf135f75a4b8100d6
+    entity_id: 877e5b15d7a3f0203702b789e3341df3
+    domain: binary_sensor
+    trigger: device
+    for:
+      hours: 0
+      minutes: 1
+      seconds: 0
+  conditions:
+  - condition: state
+    entity_id: binary_sensor.zigbee_vibration_sensor_vibration
+    attribute: device_class
+    state: vibration
+    for:
+      hours: 0
+      minutes: 1
+      seconds: 5
+  actions:
+  - device_id: 9ffefedebce49dc943091010a84fcfce
+    domain: mobile_app
+    type: notify
+    message: I'm done shaking.
+    title: Dryer Alert!
+  - device_id: ea43a98b40abfb7c7c331ee5be5f2710
+    domain: mobile_app
+    type: notify
+    message: 'I’m done shaking. '
+    title: Dryer has FINISHED
+  mode: single
+- id: '1756174733716'
+  alias: Bathroom Underlight Button
+  description: ''
+  triggers:
+  - domain: mqtt
+    device_id: 335e8289f5b56a55b81ffcf49280e2c2
+    type: action
+    subtype: single
+    trigger: device
+  conditions: []
+  actions:
+  - type: toggle
+    device_id: b32513797dbe7668e305cf6018ebd3c8
+    entity_id: 00d7a4236205826da53ae28ebb100bf4
+    domain: light
+  mode: single
+- id: '1756174938392'
+  alias: Bathroom Underlight Time Off
+  description: ''
+  triggers:
+  - domain: mqtt
+    device_id: 335e8289f5b56a55b81ffcf49280e2c2
+    type: action
+    subtype: hold
+    trigger: device
+  conditions: []
+  actions:
+  - device_id: b32513797dbe7668e305cf6018ebd3c8
+    domain: light
+    entity_id: 00d7a4236205826da53ae28ebb100bf4
+    type: flash
+  - delay:
+      hours: 0
+      minutes: 3
+      seconds: 0
+      milliseconds: 0
+  - type: turn_off
+    device_id: b32513797dbe7668e305cf6018ebd3c8
+    entity_id: 00d7a4236205826da53ae28ebb100bf4
+    domain: light
+  mode: single
+- id: '1756436574613'
+  alias: Kitchen - Z-KNOB2 - Turn Brightness Up
+  description: ''
+  triggers:
+  - domain: mqtt
+    device_id: d5d825e18f954aeba78d61a92cb566df
+    type: action
+    subtype: brightness_step_up
+    trigger: device
+  conditions: []
+  actions:
+  - device_id: 355e6379cfde5b1a3eb4ab6f66cbf694
+    domain: light
+    entity_id: 424c6142454353da02d68b0ead536db2
+    type: brightness_increase
+  mode: single
+- id: '1756436655443'
+  alias: Kitchen - Z-KNOB2 - Turn Brightness Down
+  description: ''
+  triggers:
+  - domain: mqtt
+    device_id: d5d825e18f954aeba78d61a92cb566df
+    type: action
+    subtype: brightness_step_down
+    trigger: device
+  conditions: []
+  actions:
+  - device_id: 355e6379cfde5b1a3eb4ab6f66cbf694
+    domain: light
+    entity_id: 424c6142454353da02d68b0ead536db2
+    type: brightness_decrease
+  mode: single
+- id: '1756616148388'
+  alias: Kitchen - Z-KNOB2 - Toggle On / Off
+  description: ''
+  triggers:
+  - domain: mqtt
+    device_id: d5d825e18f954aeba78d61a92cb566df
+    type: action
+    subtype: toggle
+    trigger: device
+    alias: Zigbee Smart Knob 2 “Toggle” action
+  conditions: []
+  actions:
+  - action: light.toggle
+    metadata: {}
+    data:
+      brightness_pct: 100
+      color_temp_kelvin: 2496
+    target:
+      device_id:
+      - 355e6379cfde5b1a3eb4ab6f66cbf694
   mode: single

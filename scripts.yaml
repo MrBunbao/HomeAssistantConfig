@@ -3,13 +3,32 @@ text_shannon_questions:
   use_blueprint:
     path: homeassistant/confirmable_notification.yaml
     input:
-      notify_device: ea43a98b40abfb7c7c331ee5be5f2710
+      notify_device: 9ffefedebce49dc943091010a84fcfce
       title: Genie here, answer this
       message: Do you love Andy?
       confirm_text: Confirmed!
       dismiss_action:
-      - action: notify.mobile_app_shannons_iphone
-        metadata: {}
-        data:
-          message: Sad
+      - device_id: 9ffefedebce49dc943091010a84fcfce
+        domain: mobile_app
+        type: notify
+        message: Saddest day
+        title: Lol
+      confirm_action:
+      - device_id: f2081809a03d51241fa17845111c5f7e
+        domain: light
+        entity_id: 78170b7c00a6f12bc4de25bf0af87443
+        type: flash
+      dismiss_text: Nahhh
+  description: ''
+andy_s_office_scene_toggle:
+  alias: Andy's Office Scene Toggle
+  use_blueprint:
+    path: panhans/scene_toggle.yaml
+    input:
+      area: andys_office
+      included_scenes:
+      - scene.andy_s_office_all_lights_honolulu
+      - scene.andy_s_office_all_lights_lil_tokyo
+      - scene.andy_s_office_all_lights_lust
+      use_static_order: true
   description: ''

@@ -1,0 +1,49 @@
+- id: '1751773990046'
+  name: Bathroom Under Lighting
+  entities:
+    light.hue_lightstrip_2:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 6535
+      min_mireds: 153
+      max_mireds: 500
+      effect_list:
+      - 'off'
+      - candle
+      - fire
+      - prism
+      - sparkle
+      - opal
+      - glisten
+      - underwater
+      - cosmos
+      - sunbeam
+      - enchant
+      - sunrise
+      - sunset
+      supported_color_modes:
+      - color_temp
+      - xy
+      effect: 'off'
+      color_mode: xy
+      brightness: 255
+      color_temp_kelvin:
+      color_temp:
+      hs_color:
+      - 325.189
+      - 83.137
+      rgb_color:
+      - 255
+      - 43
+      - 166
+      xy_color:
+      - 0.5143
+      - 0.2225
+      mode: normal
+      dynamics: none
+      friendly_name: Andy’s Office Closet Lights
+      supported_features: 44
+      state: 'on'
+  icon: mdi:led-strip-variant
+  metadata:
+    light.hue_lightstrip_2:
+      entity_only: true
