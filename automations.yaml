@@ -1,38 +1,49 @@
 - id: '1707880928591'
   alias: Andy - Driving Flag Turn OFF
   description: ''
-  trigger:
-  - platform: state
-    entity_id:
-    - device_tracker.andys_iphone_icv3
+  triggers:
+  - entity_id:
+    - device_tracker.andys_iphone_15
     to: home
     for:
       hours: 0
       minutes: 5
       seconds: 0
-  condition:
+    trigger: state
+  conditions:
   - condition: state
     entity_id: input_boolean.andy_driving_flag
     state: 'on'
-  action:
-  - service: input_boolean.turn_off
-    target:
+    enabled: false
+  - condition: device
+    device_id: 34c5a970e762b6fecf8c234195cc58fa
+    domain: device_tracker
+    entity_id: 2bda56f6be6d9c277b3c25a8d53de174
+    type: is_home
+  actions:
+  - target:
       entity_id:
       - input_boolean.andy_driving_flag
       device_id: []
       area_id: []
     data: {}
+    action: input_boolean.turn_off
   mode: single
 - id: '1707881038946'
   alias: Andy - Driving Flag Turn ON
   triggers:
-  - value_template: '{{states("sensor.andys_iphone_icv3_zone_distance") | float >
-      2}}'
+  - value_template: '{{states("sensor.andys_iphone_15_zone_distance") | float > 2}}'
     trigger: template
   conditions:
   - condition: state
     entity_id: input_boolean.andy_far_away_flag
     state: 'off'
+    enabled: false
+  - condition: device
+    device_id: 34c5a970e762b6fecf8c234195cc58fa
+    domain: device_tracker
+    entity_id: 2bda56f6be6d9c277b3c25a8d53de174
+    type: is_not_home
   actions:
   - data: {}
     target:
@@ -43,19 +54,24 @@
   alias: Andy - Far Away Flag, Turn OFF
   description: ''
   triggers:
-  - value_template: '{{states("sensor.andys_iphone_icv3_zone_distance") | float <=
-      5}}'
+  - value_template: '{{states("sensor.andys_iphone_15_zone_distance") | float <= 5}}'
     trigger: template
   conditions:
   - alias: Confirm Andy ZoneDistance:FromZone is home
     condition: state
-    entity_id: device_tracker.andys_iphone_icv3
+    entity_id: device_tracker.andys_iphone_15
     attribute: from_zone
     state: home
-    enabled: true
+    enabled: false
   - condition: state
     entity_id: input_boolean.andy_far_away_flag
     state: 'on'
+    enabled: false
+  - condition: device
+    device_id: 34c5a970e762b6fecf8c234195cc58fa
+    domain: device_tracker
+    entity_id: 2bda56f6be6d9c277b3c25a8d53de174
+    type: is_home
   actions:
   - alias: 'Andy Far Away Flag: Turn off'
     data: {}
@@ -68,13 +84,14 @@
   alias: Andy - Far Away Flag, Turn ON
   description: ''
   triggers:
-  - value_template: '{{states("sensor.andys_iphone_icv3_zone_distance") | float >
-      5}}'
+  - value_template: '{{states("sensor.andys_iphone_15_zone_distance") | float > 5}}'
     trigger: template
   conditions:
-  - condition: state
-    entity_id: input_boolean.andy_far_away_flag
-    state: 'off'
+  - condition: device
+    device_id: 34c5a970e762b6fecf8c234195cc58fa
+    domain: device_tracker
+    entity_id: 2bda56f6be6d9c277b3c25a8d53de174
+    type: is_not_home
   actions:
   - alias: 'Andy Far Away Flag: Turn on'
     data: {}
@@ -115,23 +132,21 @@
 - id: '1709956366094'
   alias: Master Bedroom Hue Dimmer Toggle Fairy Lights
   description: ''
-  trigger:
+  triggers:
   - device_id: 1e8b183e7cce74d22c654caaf42be439
     domain: hue
-    platform: device
     type: initial_press
     subtype: 1
     unique_id: 04bdc157-8f03-4053-a474-e27caa0cb140
-  condition: []
-  action:
-  - service: light.toggle
-    metadata: {}
+    trigger: device
+  conditions: []
+  actions:
+  - metadata: {}
     data: {}
     target:
       entity_id:
-      - light.bedroom_hue_aumbiance_bulb_1
-      - light.bedroom_hue_aumbiance_bulb_3
-      - light.bedroom_hue_aumbiance_bulb_2
+      - light.master_bedroom_fairy_lights
+    action: light.toggle
   mode: single
 - id: '1709958185505'
   alias: Hue, Friends Of Hue switch, 4 button, all functions
@@ -150,33 +165,33 @@
 - id: '1710001954743'
   alias: Shannon - Driving Flag Turn OFF
   description: ''
-  trigger:
-  - platform: state
-    entity_id:
-    - device_tracker.shannons_iphone_icv3
+  triggers:
+  - entity_id:
+    - device_tracker.shannons_iphone_16
     to: home
     for:
       hours: 0
       minutes: 5
       seconds: 0
-  condition:
+    trigger: state
+  conditions:
   - condition: state
     entity_id: input_boolean.shannon_driving_flag
     state: 'on'
-  action:
-  - service: input_boolean.turn_off
-    target:
+  actions:
+  - target:
       device_id: []
       area_id: []
       entity_id: input_boolean.shannon_driving_flag
     data: {}
+    action: input_boolean.turn_off
   mode: single
 - id: '1710001992963'
   alias: Shannon - Driving Flag Turn ON
   description: ''
   triggers:
-  - value_template: '{{states("sensor.shannons_iphone_icv3_zone_distance") | float
-      > 2}}'
+  - value_template: '{{states("sensor.shannons_iphone_16_zone_distance") | float >
+      2}}'
     trigger: template
   conditions:
   - condition: state
@@ -193,15 +208,15 @@
   description: ''
   triggers:
   - entity_id:
-    - sensor.shannons_iphone_icv3_zone_distance
+    - sensor.shannons_iphone_16_zone_distance
     below: 5
     trigger: numeric_state
   conditions:
-  - alias: Confirm Shannon ZoneDistance:FromZone is not home
-    condition: state
-    entity_id: sensor.shannons_iphone_icv3_zone_distance
-    attribute: from_zone
-    state: home
+  - condition: device
+    device_id: df19306cbd4c5d127e82ad062311fecb
+    domain: device_tracker
+    entity_id: fd53eec106c4955684128dc13335d790
+    type: is_home
   actions:
   - alias: 'Shannon Far Away Flag: Turn off'
     data: {}
@@ -215,15 +230,15 @@
   triggers:
   - alias: When Shannon Zone Distance is above 5 mi
     entity_id:
-    - sensor.shannons_iphone_icv3_zone_distance
+    - sensor.shannons_iphone_16_zone_distance
     above: 5
     trigger: numeric_state
   conditions:
-  - alias: Confirm Shannon ZoneDistance:FromZone is not home
-    condition: state
-    entity_id: sensor.shannons_iphone_icv3_zone_distance
-    attribute: from_zone
-    state: home
+  - condition: device
+    device_id: df19306cbd4c5d127e82ad062311fecb
+    domain: device_tracker
+    entity_id: fd53eec106c4955684128dc13335d790
+    type: is_not_home
   actions:
   - alias: 'Shannon Far Away Flag: Turn on'
     data: {}
@@ -231,104 +246,8 @@
       entity_id: input_boolean.shannon_far_away_flag
     action: input_boolean.turn_on
   mode: single
-- id: '1714975183505'
-  alias: Shannon - Open Garage when Arriving Home
-  description: Open Garage when Arriving Home
-  triggers:
-  - value_template: '{{states("sensor.shannons_iphone_icv3_zone_distance")  | float
-      <= 0.10}}'
-    trigger: template
-  - entity_id:
-    - sensor.shannons_iphone_icv3_zone_name
-    to: Home
-    trigger: state
-  conditions:
-  - condition: state
-    entity_id: input_boolean.shannon_driving_flag
-    state: 'on'
-  actions:
-  - alias: execute automation depending if the time is not between 11pm - 7am
-    if:
-    - condition: time
-      after: '23:00:00'
-      before: 07:00:00
-      weekday:
-      - sun
-      - mon
-      - tue
-      - wed
-      - thu
-      - fri
-      - sat
-    then:
-    - alias: Message Baby's - it's late to run the automation
-      device_id: ea43a98b40abfb7c7c331ee5be5f2710
-      domain: mobile_app
-      type: notify
-      title: It's late
-      message: Sorry honey, can't open the garage just in case since it's late. Love
-        you!
-    else:
-    - alias: Send a message to Baby's phone via HA App
-      data:
-        title: Heyo, welcome home-y-yo
-        message: I LOOOOVE YOU. I hope your trip was amazing <3.
-      action: notify.mobile_app_shannons_iphone
-    - alias: Open Garage
-      data: {}
-      enabled: true
-      action: cover.open_cover
-      target:
-        entity_id: cover.smart_garage_door_2310087254725461070248e1e9dd51a3_garage
-  mode: single
-- id: '1733564190781'
-  alias: Andy - Open Garage when Arriving Home
-  description: Open Garage when Arriving Home
-  triggers:
-  - value_template: '{{states("sensor.andys_iphone_icv3_zone_distance")  | float <=
-      0.10}}'
-    trigger: template
-  - entity_id:
-    - device_tracker.andys_iphone_icv3
-    to: Home
-    trigger: state
-  conditions:
-  - condition: state
-    entity_id: input_boolean.andy_driving_flag
-    state: 'on'
-  actions:
-  - alias: execute automation depending if the time is not between 11pm - 7am
-    if:
-    - condition: time
-      after: '23:00:00'
-      before: 07:00:00
-      weekday:
-      - sun
-      - mon
-      - tue
-      - wed
-      - thu
-      - fri
-      - sat
-    then:
-    - device_id: 9ffefedebce49dc943091010a84fcfce
-      domain: mobile_app
-      type: notify
-      message: YO - ITS LATE - ABORT GARAGE AUTOMATION. I REPEAT - WE ARE NOT OPENING
-        THE GARAGE AUTOMATICALLY. You're welcome.
-    else:
-    - action: notify.mobile_app_andys_iphone
-      data:
-        title: Hey 5 foot 10 king
-        message: Hope your day was s'well. Get inside my Guy. Mwah.
-    - alias: Open Garage
-      action: cover.open_cover
-      data: {}
-      target:
-        entity_id: cover.smart_garage_door_2310087254725461070248e1e9dd51a3_garage
-  mode: single
 - id: '1750052296229'
-  alias: Laundry Washer Machine Cycle Notifier
+  alias: Laundry Washer Machine Cycle Notifier for Start and End
   description: ''
   use_blueprint:
     path: Blackshome/appliance-notifications.yaml
@@ -338,38 +257,109 @@
       running_dead_zone: 3
       include_start_notify: enable_start_notify_options
       start_notify_device:
-      - 9ffefedebce49dc943091010a84fcfce
+      - 647558d51a8c2aeacdae47429da048b7
       - ea43a98b40abfb7c7c331ee5be5f2710
-      start_title: Washing Cycle has STARTED!
+      - 5bb6ee0b59dc91afbb04f265c5da928c
+      start_title: Washer Machine is a narc and says...
       include_end_notify: enable_end_notify_options
       end_notify_device:
-      - 9ffefedebce49dc943091010a84fcfce
+      - 647558d51a8c2aeacdae47429da048b7
       - ea43a98b40abfb7c7c331ee5be5f2710
-      end_message_title: Washing Cycle is D.O.N.E.
-      include_power_tracking: enable_power_tracking
+      - 5bb6ee0b59dc91afbb04f265c5da928c
+      end_message_title: Washer Machine Says
+      include_power_tracking: disable_power_tracking
       include_custom_actions:
       - enable_start_custom_actions
       - enable_end_custom_actions
-      end_custom_actions:
+      start_custom_actions:
+      - action: media_player.play_media
+        metadata: {}
+        data:
+          media:
+            media_content_id: media-source://media_source/local/Shipboard Announcement
+              - Disney Cruise Line [I-11Pk_iN2A].mp3
+            media_content_type: audio/mpeg
+            metadata:
+              title: Shipboard Announcement - Disney Cruise Line [I-11Pk_iN2A].mp3
+              thumbnail:
+              media_class: music
+              children_media_class:
+              navigateIds:
+              - {}
+              - media_content_type: app
+                media_content_id: media-source://media_source
+              browse_entity_id: media_player.home_assistant_voice_0a44a2_media_player
+        target:
+          entity_id:
+          - media_player.home_assistant_voice_0a44a2_media_player
+          - media_player.master_bedroom
+        enabled: true
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 4
+          milliseconds: 0
       - action: tts.cloud_say
         metadata: {}
         data:
           cache: false
-          entity_id: media_player.kitchen_homepod
-          message: Hello there again, if you're the same person. The dryer is done
-            drying your clothes - because that's what it does.
+          entity_id: media_player.home_assistant_voice_0a44a2_media_player
+          message: Hello peasant. I mean, my liege. I'll SCRUB-A-dub-dub your clothes
+            right away.
+        alias: TTS HA Voice
+      - action: tts.cloud_say
+        metadata: {}
+        data:
+          cache: false
+          entity_id: media_player.master_bedroom
+          message: Hello peasant. I mean, my liege. I'll SCRUB-A-dub-dub your clothes
+            right away.
+        alias: TTS HomePod Mini
+      end_custom_actions:
+      - action: media_player.play_media
+        metadata: {}
+        data:
+          media:
+            media_content_id: media-source://media_source/local/Shipboard Announcement
+              - Disney Cruise Line [I-11Pk_iN2A].mp3
+            media_content_type: audio/mpeg
+            metadata:
+              title: Shipboard Announcement - Disney Cruise Line [I-11Pk_iN2A].mp3
+              thumbnail:
+              media_class: music
+              children_media_class:
+              navigateIds:
+              - {}
+              - media_content_type: app
+                media_content_id: media-source://media_source
+              browse_entity_id: media_player.home_assistant_voice_0a44a2_media_player
+        target:
+          entity_id:
+          - media_player.home_assistant_voice_0a44a2_media_player
+          - media_player.master_bedroom
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 4
+          milliseconds: 0
+      - action: tts.cloud_say
+        metadata: {}
+        data:
+          cache: false
+          entity_id: media_player.home_assistant_voice_0a44a2_media_player
+          message: 'Ahoy mate. Your wash cycle is complete. '
+        alias: TTS to HomeAssistant Voice
+      - action: tts.cloud_say
+        metadata: {}
+        data:
+          cache: false
+          entity_id: media_player.master_bedroom
+          message: 'Ahoy mate. Your wash cycle is complete. '
+        alias: TTS to HomePod
       start_appliance_power: 5
       end_appliance_power: 2
-      start_custom_actions:
-      - action: tts.cloud_say
-        metadata: {}
-        data:
-          cache: false
-          entity_id: media_player.kitchen_homepod
-          message: Hello there person in this room. The laundry load is finished,
-            whether that's for you or them, it's washed.
-      start_message: LET'S GET THIS BIZNATCH, CLEANED!
-      end_message: ME CLEAN DON'T LET ME BE SMELLY AGAIN
+      start_message: LET'S COOK - I MEAN CLEAN
+      end_message: R.E.S.P.E... wrong protocol. I mean, washer machine is boop
       weekday_options:
       - mon
       - tue
@@ -379,6 +369,7 @@
       - sun
       - sat
       end_message_kwh: Consumption
+      global_conditions: []
 - id: '1751321970855'
   alias: Theatre Hue Dimmer Switch (z2mqtt)
   description: ''
@@ -476,7 +467,7 @@
       - fc14d32bd7c4d9ad741c569de761bc76
   mode: single
 - id: '1751790475765'
-  alias: Andys Office Pico ON turns on Lust scene
+  alias: Andys Office Pico ON turns on Scene
   description: ''
   triggers:
   - device_id: b4e7723f2e000344742eb349165469c9
@@ -491,11 +482,13 @@
     metadata: {}
     data: {}
     target:
-      entity_id: scene.andy_s_office_all_lights_lust
+      entity_id:
+      - scene.andy_s_office_all_lights_honolulu
   - type: turn_on
-    device_id: b4611a3714c78953c68a6aab35d6bf76
-    entity_id: c40097c020c562d588e322148a801671
-    domain: switch
+    device_id: 37f4792d956b8e881d30f1c2acac2c6e
+    entity_id: 428fbda493f8f4adfe8246ada5f33d06
+    domain: light
+    brightness_pct: 75
   mode: single
 - id: '1751791108844'
   alias: Garage CLOSED will Turn OFF  overhead lights
@@ -706,7 +699,7 @@
   description: ''
   triggers:
   - domain: mqtt
-    device_id: 4b88b7ec9cf1e70e721da71aac1993f9
+    device_id: 7c7cf3675f128e3e3eb3270d461137f0
     type: action
     subtype: single
     trigger: device
@@ -729,46 +722,13 @@
     for:
       hours: 0
       minutes: 0
-      seconds: 11
+      seconds: 10
   conditions: []
   actions:
   - type: turn_off
     device_id: bcff3c708632217a59ebf2ae66acacf8
     entity_id: 3434271ebaf770cd906d1775ea19168c
     domain: switch
-  mode: single
-- id: '1754213116276'
-  alias: Andy’s Office Turn Off All Light via Switches
-  description: ''
-  triggers:
-  - type: turned_off
-    device_id: 61d77b8c30cca28a47cf32bc09ac1ad5
-    entity_id: a3c9625cbda210c81f5a2fbfe0d25d6b
-    domain: switch
-    trigger: device
-  - device_id: b4e7723f2e000344742eb349165469c9
-    domain: lutron_caseta
-    type: press
-    subtype: 'off'
-    trigger: device
-  conditions: []
-  actions:
-  - type: turn_off
-    device_id: 0a7e154803404f952e6c9edb9000e2b6
-    entity_id: 0c07dbdd4ab97f79ae3fa61402c3489f
-    domain: light
-  - type: turn_off
-    device_id: b32513797dbe7668e305cf6018ebd3c8
-    entity_id: 00d7a4236205826da53ae28ebb100bf4
-    domain: light
-  - type: turn_off
-    device_id: b4611a3714c78953c68a6aab35d6bf76
-    entity_id: c40097c020c562d588e322148a801671
-    domain: switch
-  - type: turn_off
-    device_id: 65fd2c817e01b5b2e11db9e3b0a4ec37
-    entity_id: fcb0463d2729e6e7220320a70e1cb0a6
-    domain: light
   mode: single
 - id: '1755380756226'
   alias: Andys Office Smart Knob - Increase Brightness
@@ -837,64 +797,146 @@
       entity_id: script.andy_s_office_scene_toggle
   mode: single
 - id: '1755383469676'
-  alias: Laundry Room - Dryer Vibration Notification
-  description: ''
+  alias: Laundry Room - Dryer Cycle Started
+  description: Starts when vibration is ON for ≥30s; sets dryer_running and notifies
+    (15m cooldown)
   triggers:
-  - type: vibration
-    device_id: a33919edf879742cf135f75a4b8100d6
-    entity_id: 877e5b15d7a3f0203702b789e3341df3
-    domain: binary_sensor
-    trigger: device
+  - entity_id:
+    - binary_sensor.laundry_room_dryer_vibration_sensor_vibration
+    from: 'off'
+    to: 'on'
     for:
-      hours: 0
-      minutes: 0
-      seconds: 35
-  conditions: []
-  actions:
-  - device_id: 9ffefedebce49dc943091010a84fcfce
-    domain: mobile_app
-    type: notify
-    message: I'll let ya know when I'm done shaking.
-    title: Dryer Machine Alert!
-  - device_id: ea43a98b40abfb7c7c331ee5be5f2710
-    domain: mobile_app
-    type: notify
-    message: I'll let ya know when I'm done shaking.
-    title: I'll let ya know when I'm done shaking.
-  mode: single
-- id: '1755385371802'
-  alias: Laundry Room - Vibration Sensor (Stopped) Alert
-  description: ''
-  triggers:
-  - type: no_vibration
-    device_id: a33919edf879742cf135f75a4b8100d6
-    entity_id: 877e5b15d7a3f0203702b789e3341df3
-    domain: binary_sensor
-    trigger: device
-    for:
-      hours: 0
-      minutes: 1
-      seconds: 0
+      seconds: 30
+    trigger: state
   conditions:
   - condition: state
-    entity_id: binary_sensor.zigbee_vibration_sensor_vibration
-    attribute: device_class
-    state: vibration
-    for:
-      hours: 0
-      minutes: 1
-      seconds: 5
+    entity_id: input_boolean.dryer_running
+    state: 'off'
+  - alias: Only once every 15 minutes
+    condition: template
+    value_template: '{{ (as_timestamp(now()) - as_timestamp(this.attributes.last_triggered
+      or 0)) > 15*60 }}'
   actions:
-  - device_id: 9ffefedebce49dc943091010a84fcfce
-    domain: mobile_app
-    type: notify
-    message: I'm done shaking.
-    title: Dryer Alert!
+  - action: input_boolean.turn_on
+    data: {}
+    target:
+      entity_id: input_boolean.dryer_running
   - device_id: ea43a98b40abfb7c7c331ee5be5f2710
     domain: mobile_app
     type: notify
-    message: 'I’m done shaking. '
-    title: Dryer has FINISHED
+    title: Dryer Machine Alert!
+    message: I'll let ya know when I'm done shaking.
+  - action: media_player.play_media
+    metadata: {}
+    data:
+      media:
+        media_content_id: media-source://media_source/local/Shipboard Announcement
+          - Disney Cruise Line [I-11Pk_iN2A].mp3
+        media_content_type: audio/mpeg
+        metadata:
+          title: Shipboard Announcement - Disney Cruise Line [I-11Pk_iN2A].mp3
+          thumbnail:
+          media_class: music
+          children_media_class:
+          navigateIds:
+          - {}
+          - media_content_type: app
+            media_content_id: media-source://media_source
+          browse_entity_id: media_player.home_assistant_voice_0a44a2_media_player
+    target:
+      entity_id:
+      - media_player.home_assistant_voice_0a44a2_media_player
+      - media_player.master_bedroom
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 4
+      milliseconds: 0
+  - alias: TTS HA Voice
+    action: tts.cloud_say
+    metadata: {}
+    data:
+      cache: false
+      entity_id: media_player.home_assistant_voice_0a44a2_media_player
+      message: Hello peasant. I mean, my liege. I'll BURN your clothes right away.
+  - alias: HomePod
+    action: tts.cloud_say
+    metadata: {}
+    data:
+      cache: false
+      entity_id: media_player.master_bedroom
+      message: Hello peasant. I mean, my liege. I'll BURN your clothes right away.
+  mode: single
+- id: '1755385371802'
+  alias: Laundry Room - Dryer Cycle Finished
+  description: Ends when vibration is OFF for ≥5m; clears dryer_running and notifies
+  triggers:
+  - entity_id:
+    - binary_sensor.laundry_room_dryer_vibration_sensor_vibration
+    from: 'on'
+    to: 'off'
+    for:
+      minutes: 5
+    trigger: state
+  conditions:
+  - condition: state
+    entity_id: input_boolean.dryer_running
+    state: 'on'
+  actions:
+  - target:
+      entity_id: input_boolean.dryer_running
+    action: input_boolean.turn_off
+    data: {}
+  - device_id: ea43a98b40abfb7c7c331ee5be5f2710
+    domain: mobile_app
+    type: notify
+    title: Dryer Cycle Finished
+    message: Dryer cycle complete — come get the laundry while it's warm!
+  - device_id: 647558d51a8c2aeacdae47429da048b7
+    domain: mobile_app
+    type: notify
+    message: Dryer cycle complete — come get the laundry while it's warm!
+    title: Dryer Cycle DONE
+  - action: media_player.play_media
+    metadata: {}
+    data:
+      media:
+        media_content_id: media-source://media_source/local/Shipboard Announcement
+          - Disney Cruise Line [I-11Pk_iN2A].mp3
+        media_content_type: audio/mpeg
+        metadata:
+          title: Shipboard Announcement - Disney Cruise Line [I-11Pk_iN2A].mp3
+          thumbnail:
+          media_class: music
+          children_media_class:
+          navigateIds:
+          - {}
+          - media_content_type: app
+            media_content_id: media-source://media_source
+          browse_entity_id: media_player.home_assistant_voice_0a44a2_media_player
+    target:
+      entity_id:
+      - media_player.home_assistant_voice_0a44a2_media_player
+      - media_player.master_bedroom
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 4
+      milliseconds: 0
+  - alias: TTS HA Voice
+    action: tts.cloud_say
+    metadata: {}
+    data:
+      cache: false
+      entity_id: media_player.home_assistant_voice_0a44a2_media_player
+      message: 'YOUR freakin clothes are dried now. '
+  - alias: HomePod
+    action: tts.cloud_say
+    metadata: {}
+    data:
+      cache: false
+      entity_id: media_player.master_bedroom
+      message: Your freakin clothes are dry now, hehe.
   mode: single
 - id: '1756174733716'
   alias: Bathroom Underlight Button
@@ -912,31 +954,6 @@
     entity_id: 00d7a4236205826da53ae28ebb100bf4
     domain: light
   mode: single
-- id: '1756174938392'
-  alias: Bathroom Underlight Time Off
-  description: ''
-  triggers:
-  - domain: mqtt
-    device_id: 335e8289f5b56a55b81ffcf49280e2c2
-    type: action
-    subtype: hold
-    trigger: device
-  conditions: []
-  actions:
-  - device_id: b32513797dbe7668e305cf6018ebd3c8
-    domain: light
-    entity_id: 00d7a4236205826da53ae28ebb100bf4
-    type: flash
-  - delay:
-      hours: 0
-      minutes: 3
-      seconds: 0
-      milliseconds: 0
-  - type: turn_off
-    device_id: b32513797dbe7668e305cf6018ebd3c8
-    entity_id: 00d7a4236205826da53ae28ebb100bf4
-    domain: light
-  mode: single
 - id: '1756436574613'
   alias: Kitchen - Z-KNOB2 - Turn Brightness Up
   description: ''
@@ -944,7 +961,7 @@
   - domain: mqtt
     device_id: d5d825e18f954aeba78d61a92cb566df
     type: action
-    subtype: brightness_step_up
+    subtype: rotate_right
     trigger: device
   conditions: []
   actions:
@@ -960,7 +977,7 @@
   - domain: mqtt
     device_id: d5d825e18f954aeba78d61a92cb566df
     type: action
-    subtype: brightness_step_down
+    subtype: rotate_left
     trigger: device
   conditions: []
   actions:
@@ -973,12 +990,12 @@
   alias: Kitchen - Z-KNOB2 - Toggle On / Off
   description: ''
   triggers:
-  - domain: mqtt
+  - alias: Zigbee Smart Knob 2 “Toggle” action
+    domain: mqtt
     device_id: d5d825e18f954aeba78d61a92cb566df
     type: action
-    subtype: toggle
+    subtype: single
     trigger: device
-    alias: Zigbee Smart Knob 2 “Toggle” action
   conditions: []
   actions:
   - action: light.toggle
@@ -990,3 +1007,758 @@
       device_id:
       - 355e6379cfde5b1a3eb4ab6f66cbf694
   mode: single
+- id: '1756766480593'
+  alias: Fingerbot Restart Device
+  description: ''
+  triggers:
+  - type: turned_on
+    device_id: 8f8606fbb6ee4421e9d22cd7c2ba8071
+    entity_id: 84e4399b173c0ed3948bc6a38fd9ef6b
+    domain: switch
+    trigger: device
+  conditions: []
+  actions:
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 20
+      milliseconds: 0
+  - type: toggle
+    device_id: 8f8606fbb6ee4421e9d22cd7c2ba8071
+    entity_id: 84e4399b173c0ed3948bc6a38fd9ef6b
+    domain: switch
+  mode: single
+- id: '1757804840524'
+  alias: Bathroom Underlighting On When Occupancy Detected
+  description: ''
+  triggers:
+  - type: occupied
+    device_id: 0be5a0310d2a03f4829db1192706d936
+    entity_id: 4a07d1441858af7d30d1b67c7e1272dd
+    domain: binary_sensor
+    trigger: device
+  conditions:
+  - condition: time
+    after: '19:30:00'
+    before: 00:00:00
+    weekday:
+    - sun
+    - mon
+    - tue
+    - wed
+    - thu
+    - fri
+    - sat
+    enabled: true
+  actions:
+  - type: turn_on
+    device_id: b32513797dbe7668e305cf6018ebd3c8
+    entity_id: 00d7a4236205826da53ae28ebb100bf4
+    domain: light
+    brightness_pct: 60
+  mode: single
+- id: '1757806227637'
+  alias: Bathroom Presence Sensor Not Occupied - Turn off Underlighting
+  description: ''
+  triggers:
+  - type: not_occupied
+    device_id: 0be5a0310d2a03f4829db1192706d936
+    entity_id: 4a07d1441858af7d30d1b67c7e1272dd
+    domain: binary_sensor
+    trigger: device
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 5
+  conditions:
+  - condition: time
+    after: '21:00:00'
+    before: 07:30:00
+    weekday:
+    - sun
+    - mon
+    - tue
+    - wed
+    - thu
+    - fri
+    - sat
+    enabled: true
+  actions:
+  - type: turn_off
+    device_id: b32513797dbe7668e305cf6018ebd3c8
+    entity_id: 00d7a4236205826da53ae28ebb100bf4
+    domain: light
+  mode: single
+- id: '1759617415550'
+  alias: HomeKit Trigger → SwitchBot Double Press
+  description: ''
+  triggers:
+  - entity_id: input_boolean.switchbot_double_press
+    to: 'on'
+    trigger: state
+  actions:
+  - action: script.switchbot_double_press_2
+    data: {}
+  - target:
+      entity_id:
+      - input_boolean.switchbot_double_press
+    action: input_boolean.turn_off
+    data: {}
+  mode: single
+- id: '1759619164580'
+  alias: Open Garage when Andy Get's Home and Send Message
+  description: Open Garage when Arriving Home
+  triggers:
+  - alias: When Andy is less than 0.10 km of Home
+    value_template: '{{states("sensor.andys_iphone_15_zone_distance")  | float <=
+      0.10}}'
+    trigger: template
+    id: When Andy is less than 0.10 km of Home
+  - entity_id:
+    - device_tracker.andys_iphone_15
+    to: Home
+    trigger: state
+  conditions:
+  - condition: or
+    conditions:
+    - condition: state
+      entity_id: input_boolean.andy_driving_flag
+      state: 'on'
+    - condition: state
+      entity_id: input_boolean.walking_home_flag
+      state: 'on'
+  actions:
+  - alias: execute automation depending if the time is not between 11pm - 7am
+    if:
+    - condition: time
+      after: '23:00:00'
+      before: 07:00:00
+      weekday:
+      - sun
+      - mon
+      - tue
+      - wed
+      - thu
+      - fri
+      - sat
+    then:
+    - variables:
+        late_msgs:
+        - Late arrival detected. Standing down the auto-open—sleep mode engaged.
+        - It’s late—garage auto-open aborted for safety.
+        - Night hours. Not opening the garage automatically.
+        late_pick: '{{ late_msgs | random }}'
+    - device_id: 647558d51a8c2aeacdae47429da048b7
+      domain: mobile_app
+      type: notify
+      message: '{{ late_pick }}'
+    else:
+    - variables:
+        titles:
+        - Hey 5 foot 10 king
+        - Welcome back my Liege
+        - Home base reached
+        - Touchdown
+        greetings:
+        - Hope your day was s'well. Get inside, my guy. Mwah.
+        - Garage warming up. Watch your step.
+        - You made it. Keys, phone, wallet—then inside you go.
+        - Parking complete. Door’s on standby.
+        - Welcome home—executing garage sequence.
+        last: '{{ states(''input_text.last_arrival_msg'') }}'
+        msg: "{{\n  (greetings | reject('equalto', last) | list | random)\n  if last
+          in greetings\n  else (greetings | random)\n}}"
+    - action: notify.mobile_app_andys_iphone_15
+      data:
+        title: '{{ titles | random }}'
+        message: '{{ msg }}'
+    - action: input_text.set_value
+      data:
+        entity_id: input_text.last_arrival_msg
+        value: '{{ msg }}'
+    - alias: Open Garage
+      action: cover.open_cover
+      data: {}
+      target:
+        entity_id: cover.smart_garage_door_2310087254725461070248e1e9dd51a3_garage
+      enabled: true
+  mode: single
+- id: '1759623878965'
+  alias: Walking Mode On
+  description: ''
+  triggers:
+  - domain: mqtt
+    device_id: 2d9ea2b0fd083566c14b355ba93760f1
+    type: action
+    subtype: single
+    metadata: {}
+    trigger: device
+  conditions:
+  - condition: state
+    entity_id: input_boolean.walking_home_flag
+    state: 'off'
+  actions:
+  - action: input_boolean.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: input_boolean.walking_home_flag
+  - action: notify.mobile_app_andys_iphone_15
+    data:
+      title: Walking Doggo Mode, ON!
+      message: 'Have a nice walk. <3 '
+  - action: notify.mobile_app_shannons_iphone
+    data:
+      title: Walking Doggo Mode, ON
+      message: Hopefully Hachi is cooperating. I know Bueller is :)
+    enabled: true
+  mode: single
+- id: '1759624245157'
+  alias: 'Walking Mode Off '
+  description: ''
+  triggers:
+  - domain: mqtt
+    device_id: 2d9ea2b0fd083566c14b355ba93760f1
+    type: action
+    subtype: single
+    metadata: {}
+    trigger: device
+  conditions:
+  - condition: state
+    entity_id: input_boolean.walking_home_flag
+    state: 'on'
+  actions:
+  - action: input_boolean.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: input_boolean.walking_home_flag
+  - action: notify.mobile_app_andys_iphone_15
+    data:
+      title: Walking Doggo Mode, OFF
+      message: Yeah, it's off now. No more walk. Sad.
+  - action: notify.mobile_app_shannons_iphone
+    data:
+      title: Walking Doggo Mode, OFF
+      message: Yeah, it's off now. No more walk. Sad.
+    enabled: true
+  mode: single
+- id: '1759624788733'
+  alias: Walking Mode Toggle (debounced)
+  description: Toggle walking flag from the button, with 2s debounce and per-state
+    notifications
+  triggers:
+  - domain: mqtt
+    device_id: 2d9ea2b0fd083566c14b355ba93760f1
+    type: action
+    subtype: single
+    trigger: device
+  conditions:
+  - condition: template
+    value_template: '{{ (as_timestamp(now()) - as_timestamp(states.input_boolean.walking_home_flag.last_changed))
+      > 2 }}'
+    enabled: true
+  actions:
+  - action: input_boolean.toggle
+    data: {}
+    target:
+      entity_id: input_boolean.walking_home_flag
+  - variables:
+      now_state: '{{ states(''input_boolean.walking_home_flag'') }}'
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{{now_state == ''on''}}'
+      sequence:
+      - data:
+          title: Walking Doggo Mode, ON!
+          message: Have a nice walk. <3
+        action: notify.mobile_app_andys_iphone_15
+      - action: notify.mobile_app_shannons_iphone
+        data:
+          message: Have a nice walk. <3
+          title: Walking Doggo Mode, ON!
+    default:
+    - data:
+        title: Walking Doggo Mode, OFF
+        message: Did Bueller behave this time?? ❤️
+      action: notify.mobile_app_andys_iphone_15
+    - action: notify.mobile_app_shannons_iphone
+      data:
+        message: Was Hachi good? Did Bueller do good?  ❤️
+        title: Walking Doggo Mode, OFF
+  mode: single
+- id: '1759647703445'
+  alias: Check if Garage Overhead Light every 15 minutes is ON. If ON, turn OFF.
+  description: ''
+  triggers:
+  - trigger: time_pattern
+    minutes: /15
+  conditions:
+  - condition: and
+    conditions:
+    - condition: device
+      type: is_on
+      device_id: 3eb2dec3896fe4b5002e95a9af0d8dbb
+      entity_id: d1b5ff09dc392c06a3500d76b1fd3295
+      domain: switch
+      for:
+        hours: 0
+        minutes: 10
+        seconds: 0
+    - condition: time
+      after: '22:00:00'
+      before: 06:00:00
+      weekday:
+      - sun
+      - mon
+      - tue
+      - wed
+      - thu
+      - fri
+      - sat
+  actions:
+  - type: turn_off
+    device_id: 3eb2dec3896fe4b5002e95a9af0d8dbb
+    entity_id: d1b5ff09dc392c06a3500d76b1fd3295
+    domain: switch
+  mode: single
+- id: '1759710257066'
+  alias: ' Shannon Get''s Home, Open Garage and Send Cute Message'
+  description: Open Garage when Arriving Home
+  triggers:
+  - alias: When Shannon is less than 0.10 km of Home
+    value_template: '{{states("sensor.shannons_iphone_16_zone_distance")  | float
+      <= 0.10}}'
+    trigger: template
+    id: When Shannon is less than 0.10 km of Home
+  - entity_id:
+    - device_tracker.shannons_iphone_16
+    to: Home
+    trigger: state
+  conditions:
+  - condition: or
+    conditions:
+    - condition: state
+      entity_id: input_boolean.shannon_driving_flag
+      state: 'on'
+    - condition: state
+      entity_id: input_boolean.walking_home_flag
+      state: 'on'
+  actions:
+  - alias: execute automation depending if the time is not between 11pm - 7am
+    if:
+    - condition: time
+      after: '23:00:00'
+      before: 07:00:00
+      weekday:
+      - sun
+      - mon
+      - tue
+      - wed
+      - thu
+      - fri
+      - sat
+    then:
+    - variables:
+        late_msgs:
+        - Hey sleepyhead, it’s late. Let’s not wake the neighbors. I’ll keep the garage
+          closed. Love you. ❤️
+        - "Shhh, it’s bedtime hours. Garage stays shut for safety, baby. \U0001F618"
+        - "It’s too late to open the garage, babe. Get some rest, I’ve got you. \U0001F495"
+        late_pick: '{{ late_msgs | random }}'
+    - device_id: ea43a98b40abfb7c7c331ee5be5f2710
+      domain: mobile_app
+      type: notify
+      message: '{{ late_pick }}'
+    else:
+    - variables:
+        titles:
+        - Hi my love
+        - Hello gorgeous
+        - My sweet baby
+        - Love of my life
+        - My forever girl
+        - Hey beautiful soul
+        - My precious Shannon
+        - The reason my heart beats
+        greetings:
+        - You’re home, baby — my heart just got complete again. ❤️
+        - "My love, every arrival feels like the best gift. \U0001F381"
+        - "The world feels right again because you’re here, Shannon. \U0001F30E\U0001F495"
+        - "You’re the melody my life was missing — welcome home, baby. \U0001F3B6"
+        - My baby’s home! Life just got brighter. ☀️
+        - "Every time I see you walk in, I fall in love again. \U0001F496"
+        - "Baby, your presence is my favorite comfort. \U0001F917"
+        - Shannon, my love, you are my always and forever. ♾️
+        - "Garage is opening, but it’s my arms that want to hold you. \U0001F970"
+        - "My queen is home — I love you endlessly. \U0001F451❤️"
+        last: '{{ states(''input_text.last_arrival_msg'') }}'
+        msg: "{{\n  (greetings | reject('equalto', last) | list | random)\n  if last
+          in greetings\n  else (greetings | random)\n}}"
+    - action: notify.mobile_app_shannons_iphone
+      data:
+        message: '{{ msg }}'
+        title: '{{ titles | random }}'
+    - action: input_text.set_value
+      data:
+        entity_id: input_text.last_arrival_msg
+        value: '{{ msg }}'
+    - alias: Open Garage
+      action: cover.open_cover
+      data: {}
+      target:
+        entity_id: cover.smart_garage_door_2310087254725461070248e1e9dd51a3_garage
+      enabled: true
+  mode: single
+- id: '1761448213295'
+  alias: Proposal Day
+  description: ''
+  triggers:
+  - alias: When Shannon is less than 0.10 km of Home
+    value_template: '{{states("sensor.shannons_iphone_icv3_zone_distance")  | float
+      <= 0.10}}'
+    trigger: template
+    id: When Shannon is less than 0.10 km of Home
+  - entity_id:
+    - device_tracker.shannons_iphone_icv3
+    to: Home
+    trigger: state
+  conditions:
+  - condition: or
+    conditions:
+    - condition: state
+      entity_id: input_boolean.shannon_driving_flag
+      state: 'on'
+    - condition: state
+      entity_id: input_boolean.walking_home_flag
+      state: 'on'
+  actions:
+  - alias: execute automation depending if the time is not between 11pm - 7am
+    if:
+    - condition: time
+      after: '23:00:00'
+      before: 07:00:00
+      weekday:
+      - sun
+      - mon
+      - tue
+      - wed
+      - thu
+      - fri
+      - sat
+    then:
+    - variables:
+        late_msgs:
+        - Hey sleepyhead, it’s late. Let’s not wake the neighbors. I’ll keep the garage
+          closed. Love you. ❤️
+        - "Shhh, it’s bedtime hours. Garage stays shut for safety, baby. \U0001F618"
+        - "It’s too late to open the garage, babe. Get some rest, I’ve got you. \U0001F495"
+        late_pick: '{{ late_msgs | random }}'
+    - device_id: ea43a98b40abfb7c7c331ee5be5f2710
+      domain: mobile_app
+      type: notify
+      message: '{{ late_pick }}'
+    else:
+    - variables:
+        titles:
+        - Hi my love
+        - Hello gorgeous
+        - My sweet baby
+        - Love of my life
+        - My forever girl
+        - Hey beautiful soul
+        - My precious Shannon
+        - The reason my heart beats
+        greetings:
+        - You’re home, baby — my heart just got complete again. ❤️
+        - "My love, every arrival feels like the best gift. \U0001F381"
+        - "The world feels right again because you’re here, Shannon. \U0001F30E\U0001F495"
+        - "You’re the melody my life was missing — welcome home, baby. \U0001F3B6"
+        - My baby’s home! Life just got brighter. ☀️
+        - "Every time I see you walk in, I fall in love again. \U0001F496"
+        - "Baby, your presence is my favorite comfort. \U0001F917"
+        - Shannon, my love, you are my always and forever. ♾️
+        - "Garage is opening, but it’s my arms that want to hold you. \U0001F970"
+        - "My queen is home — I love you endlessly. \U0001F451❤️"
+        last: '{{ states(''input_text.last_arrival_msg'') }}'
+        msg: "{{\n  (greetings | reject('equalto', last) | list | random)\n  if last
+          in greetings\n  else (greetings | random)\n}}"
+      enabled: true
+    - action: notify.mobile_app_shannons_iphone
+      data:
+        message: Do not go to through the garage door. You may park, but go to the
+          side of house back gate.
+        title: Why Hello, There, To Be Mrs. Dao.
+    - action: input_text.set_value
+      data:
+        entity_id: input_text.last_arrival_msg
+        value: '{{ msg }}'
+      enabled: true
+    - alias: Open Garage
+      action: cover.open_cover
+      data: {}
+      target:
+        entity_id: cover.smart_garage_door_2310087254725461070248e1e9dd51a3_garage
+      enabled: true
+  mode: single
+- id: '1761636348835'
+  alias: Andys Office Pico Remote Bottom Button Pressed Turns Off Lights
+  description: ''
+  triggers:
+  - device_id: b4e7723f2e000344742eb349165469c9
+    domain: lutron_caseta
+    type: press
+    subtype: 'off'
+    trigger: device
+  conditions: []
+  actions:
+  - action: light.turn_off
+    metadata: {}
+    data: {}
+    target:
+      device_id: f2081809a03d51241fa17845111c5f7e
+  - type: turn_off
+    device_id: 37f4792d956b8e881d30f1c2acac2c6e
+    entity_id: 428fbda493f8f4adfe8246ada5f33d06
+    domain: light
+  mode: single
+- id: '1761636477243'
+  alias: Andys Office Pico Remote Increase Light
+  description: ''
+  triggers:
+  - device_id: b4e7723f2e000344742eb349165469c9
+    domain: lutron_caseta
+    type: press
+    subtype: raise
+    trigger: device
+  conditions: []
+  actions:
+  - action: light.turn_on
+    metadata: {}
+    data:
+      brightness_step_pct: 15
+    target:
+      device_id: f2081809a03d51241fa17845111c5f7e
+  mode: single
+- id: '1761636580482'
+  alias: Andys Office Decrease Light
+  description: ''
+  triggers:
+  - device_id: b4e7723f2e000344742eb349165469c9
+    domain: lutron_caseta
+    type: press
+    subtype: lower
+    trigger: device
+  conditions: []
+  actions:
+  - action: light.turn_on
+    metadata: {}
+    data:
+      brightness_step_pct: -15
+    target:
+      device_id: f2081809a03d51241fa17845111c5f7e
+  mode: single
+- id: '1761636710002'
+  alias: Andys Office Toggle Pegboard Light
+  description: ''
+  triggers:
+  - device_id: b4e7723f2e000344742eb349165469c9
+    domain: lutron_caseta
+    type: press
+    subtype: stop
+    trigger: device
+  conditions: []
+  actions:
+  - type: toggle
+    device_id: fc5b3d1a2db1348b3961dbc918b1f721
+    entity_id: c25119fe0fc2151b2ca091c4c1fa3ffe
+    domain: light
+  mode: single
+- id: '1761638135190'
+  alias: CPAP Usage Encouragement Notification
+  description: Send Andy an encouraging message when CPAP is used
+  triggers:
+  - entity_id: sensor.cpap_current_data_date
+    trigger: state
+    alias: If the CPAP records data
+  conditions:
+  - condition: time
+    after: 06:00:00
+    before: 08:00:00
+  - alias: If the CPAP is used for 60 minutes.
+    condition: template
+    value_template: '{{ states(''sensor.cpap_usage_minutes'') | int(0) > 60 }}'
+  actions:
+  - action: notify.mobile_app_andys_iphone_15
+    data:
+      title: "\U0001F31F CPAP Success!"
+      message: YAY
+  - action: notify.mobile_app_shannons_iphone
+    data:
+      title: WOWOWOW
+      message: Congratulate Andy on a job well done for using his CPAP last night!
+  mode: single
+- id: '1762135083544'
+  alias: Andy’s Office - When someone sits down at desk, turn on scene
+  description: ''
+  triggers:
+  - type: occupied
+    device_id: 637ad5d0590dfb7c8b79c4eebee66cb6
+    entity_id: 9c73734dbe8c56562c6e640e306f33b1
+    domain: binary_sensor
+    trigger: device
+  conditions:
+  - condition: time
+    after: 05:30:00
+    before: '23:00:00'
+  actions:
+  - action: scene.turn_on
+    target:
+      entity_id: scene.vibes_vibes_vibes
+  mode: single
+- id: '1762135467509'
+  alias: Andys Office - Computer Area Unoccupied
+  description: ''
+  triggers:
+  - type: not_occupied
+    device_id: 637ad5d0590dfb7c8b79c4eebee66cb6
+    entity_id: 9c73734dbe8c56562c6e640e306f33b1
+    domain: binary_sensor
+    trigger: device
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+  conditions: []
+  actions:
+  - action: light.turn_off
+    metadata: {}
+    data: {}
+    target:
+      device_id:
+      - 65fd2c817e01b5b2e11db9e3b0a4ec37
+      - fc5b3d1a2db1348b3961dbc918b1f721
+      - 37f4792d956b8e881d30f1c2acac2c6e
+  mode: single
+- id: '1762485044399'
+  alias: Laundry Dryer Machine Cycle Notifier
+  description: ''
+  use_blueprint:
+    path: Blackshome/appliance-notifications.yaml
+    input:
+      power_sensor: sensor.laundry_room_eve_energy_washer_machine_power
+      start_time_delay: 0.25
+      running_dead_zone: 3
+      include_start_notify: enable_start_notify_options
+      start_notify_device:
+      - 647558d51a8c2aeacdae47429da048b7
+      - ea43a98b40abfb7c7c331ee5be5f2710
+      - 5bb6ee0b59dc91afbb04f265c5da928c
+      start_title: Dryer Machine Says
+      include_end_notify: enable_end_notify_options
+      end_notify_device:
+      - 647558d51a8c2aeacdae47429da048b7
+      - ea43a98b40abfb7c7c331ee5be5f2710
+      - 5bb6ee0b59dc91afbb04f265c5da928c
+      end_message_title: Dryer Machine Says
+      include_power_tracking: disable_power_tracking
+      include_custom_actions:
+      - enable_start_custom_actions
+      - enable_end_custom_actions
+      start_custom_actions:
+      - action: media_player.play_media
+        metadata: {}
+        data:
+          media:
+            media_content_id: media-source://media_source/local/Shipboard Announcement
+              - Disney Cruise Line [I-11Pk_iN2A].mp3
+            media_content_type: audio/mpeg
+            metadata:
+              title: Shipboard Announcement - Disney Cruise Line [I-11Pk_iN2A].mp3
+              thumbnail:
+              media_class: music
+              children_media_class:
+              navigateIds:
+              - {}
+              - media_content_type: app
+                media_content_id: media-source://media_source
+              browse_entity_id: media_player.home_assistant_voice_0a44a2_media_player
+        target:
+          entity_id:
+          - media_player.home_assistant_voice_0a44a2_media_player
+          - media_player.master_bedroom
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 4
+          milliseconds: 0
+      - action: tts.cloud_say
+        metadata: {}
+        data:
+          cache: false
+          entity_id: media_player.home_assistant_voice_0a44a2_media_player
+          message: Hello Human. I mean. Squire. I'll dry your clothes right away.
+        alias: TTS Voice
+      - action: tts.cloud_say
+        metadata: {}
+        data:
+          cache: false
+          entity_id: media_player.master_bedroom
+          message: Hello Human. I mean. Squire. I'll dry your clothes right away.
+        alias: TTS HomePod
+      end_custom_actions:
+      - action: media_player.play_media
+        metadata: {}
+        data:
+          media:
+            media_content_id: media-source://media_source/local/Shipboard Announcement
+              - Disney Cruise Line [I-11Pk_iN2A].mp3
+            media_content_type: audio/mpeg
+            metadata:
+              title: Shipboard Announcement - Disney Cruise Line [I-11Pk_iN2A].mp3
+              thumbnail:
+              media_class: music
+              children_media_class:
+              navigateIds:
+              - {}
+              - media_content_type: app
+                media_content_id: media-source://media_source
+              browse_entity_id: media_player.home_assistant_voice_0a44a2_media_player
+        target:
+          entity_id:
+          - media_player.home_assistant_voice_0a44a2_media_player
+          - media_player.master_bedroom
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 4
+          milliseconds: 0
+      - action: tts.cloud_say
+        metadata: {}
+        data:
+          cache: false
+          entity_id: media_player.home_assistant_voice_0a44a2_media_player
+          message: 'Yipee, is that the dryer? Better catch is before its too late! '
+        alias: to HA Voice
+      - action: tts.cloud_say
+        metadata: {}
+        data:
+          cache: false
+          entity_id: media_player.master_bedroom
+          message: 'Yipee, is that the dryer? Better catch is before its too late! '
+        alias: to Homepod
+      start_appliance_power: 200
+      end_appliance_power: 2
+      start_message: Dryer is heating up!
+      end_message: Dryer cycle complete!
+      weekday_options:
+      - mon
+      - tue
+      - wed
+      - thu
+      - fri
+      - sun
+      - sat
+      end_message_kwh: Consumption
+      global_conditions: []

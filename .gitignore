@@ -10,8 +10,52 @@
 .storage
 .cloud
 .google.token
+deps/
+tts/
+themes/
+www/
+custom_components/
+blueprints/
+image/
 
 # Ensure these YAML files are ignored, otherwise your secret data/credentials will leak.
 ip_bans.yaml
 secrets.yaml
 known_devices.yaml
+
+# Database files
+*.db
+*.db-shm
+*.db-wal
+
+# Log files
+*.log
+*.log.*
+
+# Certificate and key files
+*.pem
+*.key
+*.cert
+*.crt
+
+# Token and credential files
+*token*
+*.conf
+html5_push_registrations.conf
+
+# Backup files
+*.backup
+*.bak
+*.bin
+
+# Lock files
+*.lock
+
+# Zone logs and CSV files
+*.csv
+
+# Other sensitive files
+OZW_Log.txt
+home-assistant.log*
+*.uuid
+*.pickle

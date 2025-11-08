@@ -1,25 +1,3 @@
-text_shannon_questions:
-  alias: Text Shannon questions
-  use_blueprint:
-    path: homeassistant/confirmable_notification.yaml
-    input:
-      notify_device: 9ffefedebce49dc943091010a84fcfce
-      title: Genie here, answer this
-      message: Do you love Andy?
-      confirm_text: Confirmed!
-      dismiss_action:
-      - device_id: 9ffefedebce49dc943091010a84fcfce
-        domain: mobile_app
-        type: notify
-        message: Saddest day
-        title: Lol
-      confirm_action:
-      - device_id: f2081809a03d51241fa17845111c5f7e
-        domain: light
-        entity_id: 78170b7c00a6f12bc4de25bf0af87443
-        type: flash
-      dismiss_text: Nahhh
-  description: ''
 andy_s_office_scene_toggle:
   alias: Andy's Office Scene Toggle
   use_blueprint:
@@ -31,4 +9,198 @@ andy_s_office_scene_toggle:
       - scene.andy_s_office_all_lights_lil_tokyo
       - scene.andy_s_office_all_lights_lust
       use_static_order: true
+  description: ''
+switchbot_double_press_2:
+  alias: SwitchBot Double Press
+  mode: single
+  sequence:
+  - repeat:
+      count: 2
+      sequence:
+      - action: switch.turn_on
+        data: {}
+        target:
+          device_id: 4e7da2a0180cfa7217113732f7b1c424
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 3
+          milliseconds: 0
+  description: ''
+disney_cruise_chime_with_tts:
+  sequence:
+  - action: media_player.play_media
+    metadata: {}
+    data:
+      media:
+        media_content_id: media-source://media_source/local/Shipboard Announcement
+          - Disney Cruise Line [I-11Pk_iN2A].mp3
+        media_content_type: audio/mpeg
+        metadata:
+          title: Shipboard Announcement - Disney Cruise Line [I-11Pk_iN2A].mp3
+          thumbnail:
+          media_class: music
+          children_media_class:
+          navigateIds:
+          - {}
+          - media_content_type: app
+            media_content_id: media-source://media_source
+          browse_entity_id: media_player.home_assistant_voice_0a44a2_media_player
+    target:
+      entity_id: media_player.home_assistant_voice_0a44a2_media_player
+    alias: Play Disney Cruise Chime
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 4
+      milliseconds: 0
+  - action: tts.cloud_say
+    metadata: {}
+    data:
+      cache: false
+      entity_id: media_player.home_assistant_voice_0a44a2_media_player
+      message: 'Ahoy mate. Your wash cycle is complete. '
+  alias: Disney Cruise Chime with TTS
+  description: ''
+disney_cruise_chime_with_tts_wash_cycle_complete:
+  sequence:
+  - action: media_player.play_media
+    metadata: {}
+    data:
+      media:
+        media_content_id: media-source://media_source/local/Shipboard Announcement
+          - Disney Cruise Line [I-11Pk_iN2A].mp3
+        media_content_type: audio/mpeg
+        metadata:
+          title: Shipboard Announcement - Disney Cruise Line [I-11Pk_iN2A].mp3
+          thumbnail:
+          media_class: music
+          children_media_class:
+          navigateIds:
+          - {}
+          - media_content_type: app
+            media_content_id: media-source://media_source
+          browse_entity_id: media_player.home_assistant_voice_0a44a2_media_player
+    target:
+      entity_id: media_player.home_assistant_voice_0a44a2_media_player
+    alias: Play Disney Cruise Chime
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 4
+      milliseconds: 0
+  - action: tts.cloud_say
+    metadata: {}
+    data:
+      cache: false
+      entity_id: media_player.home_assistant_voice_0a44a2_media_player
+      message: 'Ahoy mate. Your wash cycle is complete. '
+  alias: Disney Cruise Chime with TTS - Wash Cycle Complete
+  description: ''
+disney_cruise_chime_with_tts_dryer_cycle_complete:
+  sequence:
+  - action: media_player.play_media
+    metadata: {}
+    data:
+      media:
+        media_content_id: media-source://media_source/local/Shipboard Announcement
+          - Disney Cruise Line [I-11Pk_iN2A].mp3
+        media_content_type: audio/mpeg
+        metadata:
+          title: Shipboard Announcement - Disney Cruise Line [I-11Pk_iN2A].mp3
+          thumbnail:
+          media_class: music
+          children_media_class:
+          navigateIds:
+          - {}
+          - media_content_type: app
+            media_content_id: media-source://media_source
+          browse_entity_id: media_player.home_assistant_voice_0a44a2_media_player
+    target:
+      entity_id: media_player.home_assistant_voice_0a44a2_media_player
+    alias: Play Disney Cruise Chime
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 4
+      milliseconds: 0
+  - action: tts.cloud_say
+    metadata: {}
+    data:
+      cache: false
+      entity_id: media_player.home_assistant_voice_0a44a2_media_player
+      message: Hello peasant. I mean, my liege. I'll SCRUB-A-dub-dub your clothes
+        right away.
+  alias: Disney Cruise Chime with TTS - Dryer Cycle Complete
+  description: ''
+disney_cruise_chime_with_tts_dryer_cycle_started:
+  sequence:
+  - action: media_player.play_media
+    metadata: {}
+    data:
+      media:
+        media_content_id: media-source://media_source/local/Shipboard Announcement
+          - Disney Cruise Line [I-11Pk_iN2A].mp3
+        media_content_type: audio/mpeg
+        metadata:
+          title: Shipboard Announcement - Disney Cruise Line [I-11Pk_iN2A].mp3
+          thumbnail:
+          media_class: music
+          children_media_class:
+          navigateIds:
+          - {}
+          - media_content_type: app
+            media_content_id: media-source://media_source
+          browse_entity_id: media_player.home_assistant_voice_0a44a2_media_player
+    target:
+      entity_id: media_player.home_assistant_voice_0a44a2_media_player
+    alias: Play Disney Cruise Chime
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 4
+      milliseconds: 0
+  - action: tts.cloud_say
+    metadata: {}
+    data:
+      cache: false
+      entity_id: media_player.home_assistant_voice_0a44a2_media_player
+      message: Hello Human. I mean. Squire. I'll dry your clothes right away.
+  alias: 'Disney Cruise Chime with TTS - Dryer Cycle STARTED '
+  description: ''
+disney_cruise_chime_with_tts_washer_cycle_started:
+  sequence:
+  - action: media_player.play_media
+    metadata: {}
+    data:
+      media:
+        media_content_id: media-source://media_source/local/Shipboard Announcement
+          - Disney Cruise Line [I-11Pk_iN2A].mp3
+        media_content_type: audio/mpeg
+        metadata:
+          title: Shipboard Announcement - Disney Cruise Line [I-11Pk_iN2A].mp3
+          thumbnail:
+          media_class: music
+          children_media_class:
+          navigateIds:
+          - {}
+          - media_content_type: app
+            media_content_id: media-source://media_source
+          browse_entity_id: media_player.home_assistant_voice_0a44a2_media_player
+    target:
+      entity_id: media_player.home_assistant_voice_0a44a2_media_player
+    alias: Play Disney Cruise Chime
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 4
+      milliseconds: 0
+  - action: tts.cloud_say
+    metadata: {}
+    data:
+      cache: false
+      entity_id: media_player.home_assistant_voice_0a44a2_media_player
+      message: Hello peasant. I mean, my liege. I'll SCRUB-A-DUB-DUB your clothes
+        right away.
+  alias: Disney Cruise Chime with TTS - Washer Cycle STARTED
   description: ''

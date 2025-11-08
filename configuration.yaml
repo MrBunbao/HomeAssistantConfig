@@ -42,7 +42,6 @@ panel_custom:
     require_admin: true
     config:
       ingress: core_configurator
-
   # Restart Sidebar Panel
   - name: ha_restart
     sidebar_title: Restart
@@ -52,40 +51,32 @@ panel_custom:
     embed_iframe: true
     require_admin: true
     config:
-      ingress:
-        core_configurator
-
-        # Entities Sidebar Panel
+      ingress: core_configurator
+  # Entities Sidebar Panel
   - name: panel_entities
     sidebar_title: Entities
     sidebar_icon: mdi:monitor-cellphone-star
     url_path: "config/entities"
     module_url: /api/hassio/app/entrypoint.js
     embed_iframe: true
-    require_admin:
-      true
-
-      # Addons Sidebar Panel
+    require_admin: true
+  # Addons Sidebar Panel
   - name: panel_addons
     sidebar_title: Addons
     sidebar_icon: mdi:checkbox-blank-badge
     url_path: "hassio/store"
     module_url: /api/hassio/app/entrypoint.js
     embed_iframe: true
-    require_admin:
-      true
-
-      # Services Sidebar Panel
+    require_admin: true
+  # Services Sidebar Panel
   - name: panel_services
     sidebar_title: Services
     sidebar_icon: mdi:toolbox-outline
     url_path: "developer-tools/service"
     module_url: /api/hassio/app/entrypoint.js
     embed_iframe: true
-    require_admin:
-      true
-
-      # Developer States
+    require_admin: true
+  # Developer States
   - name: panel_devtoolstate
     sidebar_title: Dev Tools States
     sidebar_icon: mdi:toolbox-outline
@@ -110,3 +101,10 @@ switch:
 # https://www.home-assistant.io/integrations/http/
 http:
   ip_ban_enabled: false
+
+
+# RANDOM TEXT AUTOMATION HELPER
+input_text:
+  last_arrival_msg:
+    name: Last Arrival Msg
+    max: 255
