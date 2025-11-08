@@ -6,7 +6,7 @@ if [[ -z $(git status --porcelain) ]]; then
     echo "No changes to commit"
     exit 0
 fi
-git add .HA_VERSION .gitignore README.md automations.yaml configuration.yaml scenes.yaml scripts.yaml 2>/dev/null
+git add .HA_VERSION .gitignore README.md CHANGELOG.md automations.yaml configuration.yaml scenes.yaml scripts.yaml 2>/dev/null
 if [[ -z $(git diff --cached) ]]; then
     echo "No staged changes to commit"
     exit 0
