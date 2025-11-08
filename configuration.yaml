@@ -108,3 +108,7 @@ input_text:
   last_arrival_msg:
     name: Last Arrival Msg
     max: 255
+
+# GitHub Backup Shell Command
+shell_command:
+  github_backup: /bin/bash /config/shell_scripts/github_backup.sh

@@ -1762,3 +1762,16 @@
       - sat
       end_message_kwh: Consumption
       global_conditions: []
+- id: 'github_backup_daily'
+  alias: GitHub Configuration Backup
+  description: Automatically backup Home Assistant configuration to GitHub
+  triggers:
+  - trigger: time
+    at: '02:00:00'
+  - trigger: homeassistant
+    event: start
+  conditions: []
+  actions:
+  - action: shell_command.github_backup
+    data: {}
+  mode: single
