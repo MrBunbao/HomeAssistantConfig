@@ -132,3 +132,16 @@ This repository is automatically backed up via a Home Assistant automation that:
 ---
 
 **Generated and maintained with [Claude Code](https://claude.com/claude-code)**
+
+## 📖 Documentation
+
+Comprehensive guides are available in the [`docs/`](docs/) folder:
+
+- **[HOW-TO-GIT.md](docs/HOW-TO-GIT.md)** - Simple guide for pushing changes to GitHub (manual vs automatic)
+- **[AUTOMATIONS.md](docs/AUTOMATIONS.md)** - Detailed automation documentation and examples
+- **[INTEGRATIONS.md](docs/INTEGRATIONS.md)** - Integration setup guides and configurations
+- **[SETUP.md](docs/SETUP.md)** - Complete installation and setup instructions
+- **[MAINTAINING.md](docs/MAINTAINING.md)** - Maintenance procedures and best practices
+
+**Also see:**
+- **[CHANGELOG.md](CHANGELOG.md)** - Version history and notable changes
