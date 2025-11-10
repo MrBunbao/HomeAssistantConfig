@@ -1762,16 +1762,67 @@
       - sat
       end_message_kwh: Consumption
       global_conditions: []
-- id: 'github_backup_daily'
+- id: github_backup_daily
   alias: GitHub Configuration Backup
   description: Automatically backup Home Assistant configuration to GitHub
   triggers:
   - trigger: time
-    at: '02:00:00'
+    at: 02:00:00
   - trigger: homeassistant
     event: start
   conditions: []
   actions:
   - action: shell_command.github_backup
     data: {}
+  mode: single
+- id: '1762750026105'
+  alias: Master Bedroom - Toggle On/Off Closet Light
+  description: ''
+  triggers:
+  - domain: mqtt
+    device_id: 4b88b7ec9cf1e70e721da71aac1993f9
+    type: action
+    subtype: single
+    trigger: device
+  conditions: []
+  actions:
+  - type: toggle
+    device_id: 2f7d212308bb7fbabefbd3e773024c78
+    entity_id: 6cfb2d3e676f7e447ea7b2676059e55a
+    domain: light
+  mode: single
+- id: '1762752641193'
+  alias: Master Bedroom - Bed Frame Button for Ambient Lighting
+  description: ''
+  triggers:
+  - domain: mqtt
+    device_id: 7cda4eeba29a30c491e7fc40c6bda217
+    type: action
+    subtype: single
+    trigger: device
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: light.master_bedroom_bed_frame_ambient_lighting
+        state: 'off'
+      sequence:
+      - action: light.turn_on
+        metadata: {}
+        target:
+          entity_id: light.master_bedroom_bed_frame_ambient_lighting
+      - delay:
+          milliseconds: 100
+      - action: light.turn_on
+        metadata: {}
+        data:
+          effect: fire
+        target:
+          entity_id: light.master_bedroom_bed_frame_ambient_lighting
+    default:
+    - action: light.turn_off
+      metadata: {}
+      target:
+        entity_id: light.master_bedroom_bed_frame_ambient_lighting
   mode: single
