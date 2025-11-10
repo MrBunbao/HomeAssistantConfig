@@ -53,13 +53,14 @@ ha core restart
 
 **Reload specific components without restart:**
 ```bash
-# Via Home Assistant service calls in Developer Tools -> Services
-# Or use the UI: Settings -> System -> (three dots) -> Reload [component]
-# Core reload via CLI restarts the entire core - use service calls instead:
+# Use Developer Tools -> Services in the UI and call these services:
 # - automation.reload
 # - script.reload
 # - scene.reload
 # - group.reload
+# - homeassistant.reload_config_entry (for integrations)
+# - homeassistant.reload_core_config (for configuration.yaml changes)
+# Or use the UI: Settings -> System -> (three dots) -> Reload [component]
 ```
 
 **View logs:**
@@ -114,22 +115,53 @@ ha network info               # Network configuration
 cat /homeassistant/automations.yaml | grep "entity_id:"
 
 # Check entity registry (UI-configured entities)
-ls -la /homeassistant/.storage/core.entity_registry
+cat /homeassistant/.storage/core.entity_registry | grep -A 5 "entity_id_you_want"
 
 # Monitor real-time events (UI: Developer Tools -> Events)
 # Listen to: state_changed, automation_triggered, service_called
+```
+
+**Finding entity IDs for UI-managed devices:**
+```bash
+# Method 1: Search entity registry storage file
+cat /homeassistant/.storage/core.entity_registry | grep -i "device_name"
+
+# Method 2: Check device registry for device IDs
+cat /homeassistant/.storage/core.device_registry | grep -i "device_name"
+
+# Method 3: Use Developer Tools -> States in UI (most reliable)
+# Filter by domain (e.g., "light.", "switch.", "sensor.")
 ```
 
 **Check for automation errors:**
 ```bash
 ha core logs | grep -i "automation"
 ha core logs | grep -i "error"
+
+# Follow logs in real-time during testing
+ha core logs -f
+
+# Check specific integration logs (e.g., iCloud3)
+tail -f /homeassistant/icloud3.log
 ```
 
 **Validate YAML syntax without restarting:**
 ```bash
 ha core check
 # This validates all YAML files including automations, scripts, and scenes
+```
+
+**Testing automations and services:**
+```bash
+# Use Developer Tools -> Services to call services manually
+# Common service patterns:
+# - light.turn_on (entity_id: light.example)
+# - automation.trigger (entity_id: automation.example)
+# - script.turn_on (entity_id: script.example)
+
+# Check if automation is enabled:
+# Developer Tools -> States -> search for automation.automation_name
+# Look for state: "on" or "off"
 ```
 
 ### ESPHome Management
@@ -219,6 +251,59 @@ Automations follow these patterns:
     - action: light.turn_on
       target:
         entity_id: light.example
+```
+
+### Home Assistant Service Call Patterns
+
+Service calls are the core of Home Assistant actions. Understanding the pattern is critical:
+
+**Basic service call structure:**
+```yaml
+actions:
+  - action: domain.service_name
+    target:
+      entity_id: entity.id
+    data:
+      parameter: value
+```
+
+**Common service domains:**
+- `light.*` - Light control (turn_on, turn_off, toggle)
+- `switch.*` - Switch control (turn_on, turn_off, toggle)
+- `automation.*` - Automation management (trigger, turn_on, turn_off, reload)
+- `script.*` - Script execution (turn_on, reload)
+- `notify.*` - Notifications (send_message, persistent_notification)
+- `homeassistant.*` - System services (restart, reload_config_entry)
+
+**Light service examples:**
+```yaml
+# Simple turn on
+- action: light.turn_on
+  target:
+    entity_id: light.office
+
+# Turn on with brightness
+- action: light.turn_on
+  target:
+    entity_id: light.office
+  data:
+    brightness_pct: 75
+
+# Turn on with color
+- action: light.turn_on
+  target:
+    entity_id: light.office
+  data:
+    rgb_color: [255, 0, 0]  # Red
+```
+
+**Testing service calls:**
+```bash
+# Use Developer Tools -> Services in UI
+# 1. Select service (e.g., light.turn_on)
+# 2. Choose target entity
+# 3. Add data parameters in YAML mode
+# 4. Click "Call Service"
 ```
 
 **Key automation practices:**
@@ -429,9 +514,151 @@ changes
 - HACS is installed and manages 15+ custom integrations
 - Custom integrations are in `/homeassistant/custom_components/`
 - **Never commit custom_components/** - these are managed by HACS
-- Update integrations through HACS UI (Settings -> HACS)
-- After updating custom integrations, restart Home Assistant: `ha core restart`
-- Custom integration logs appear in `ha core logs` and `icloud3.log` (for iCloud3)
+
+**Updating HACS integrations:**
+```bash
+# Update through HACS UI: Settings -> HACS
+# 1. Click on integration to update
+# 2. Click "Download" or "Update"
+# 3. Restart Home Assistant after updates
+ha core restart
+
+# Check HACS logs for update issues:
+ha core logs | grep -i "hacs"
+```
+
+**After updating custom integrations:**
+```bash
+# Always restart Home Assistant
+ha core restart
+
+# Check if integration loaded successfully
+ha core logs | grep -i "custom_components"
+ha core logs | grep -i "integration_name"
+
+# Custom integration logs appear in:
+# - ha core logs (general)
+# - /homeassistant/icloud3.log (for iCloud3 specifically)
+```
+
+**Troubleshooting HACS integrations:**
+```bash
+# If integration fails to load after update:
+# 1. Check logs for specific errors
+ha core logs | grep -i "error" | grep -i "custom_components"
+
+# 2. Clear cache and restart
+rm -rf /homeassistant/.storage/custom_components.json
+ha core restart
+
+# 3. Reinstall integration through HACS if needed
+# HACS -> Integration -> Remove -> Reinstall
+```
+
+## Common Troubleshooting Workflows
+
+### Automation Not Triggering
+
+1. **Verify automation is enabled:**
+   ```bash
+   # Check state in Developer Tools -> States
+   # Search for: automation.automation_name
+   # State should be "on"
+   ```
+
+2. **Check automation syntax:**
+   ```bash
+   ha core check
+   ha core logs | grep -i "automation_name"
+   ```
+
+3. **Test trigger manually:**
+   ```bash
+   # Developer Tools -> Services
+   # Call: automation.trigger
+   # Entity: automation.automation_name
+   ```
+
+4. **Monitor events in real-time:**
+   ```bash
+   # Developer Tools -> Events -> Listen to: state_changed
+   # Change the trigger entity state and see if event fires
+   ```
+
+### Light/Device Not Responding
+
+1. **Check entity state:**
+   ```bash
+   # Developer Tools -> States
+   # Find entity and check if "unavailable"
+   ```
+
+2. **Test service call manually:**
+   ```bash
+   # Developer Tools -> Services
+   # Try: light.turn_on with entity_id
+   # Check for error messages
+   ```
+
+3. **Check integration logs:**
+   ```bash
+   ha core logs | grep -i "integration_name"
+   ha core logs | grep -i "entity_id"
+   ```
+
+4. **Reload integration:**
+   ```bash
+   # Settings -> Devices & Services -> Integration -> (three dots) -> Reload
+   # Or restart: ha core restart
+   ```
+
+### Configuration Not Loading After Changes
+
+1. **Validate YAML syntax:**
+   ```bash
+   ha core check
+   # Fix any errors reported
+   ```
+
+2. **Check for indentation issues:**
+   ```bash
+   # YAML is indentation-sensitive (use 2 spaces, not tabs)
+   cat /homeassistant/configuration.yaml
+   ```
+
+3. **Reload specific component:**
+   ```bash
+   # Developer Tools -> Services
+   # Call appropriate reload service (e.g., script.reload)
+   ```
+
+4. **Check logs for load errors:**
+   ```bash
+   ha core restart
+   ha core logs | grep -i "error"
+   ```
+
+### Git Push Failures
+
+1. **Check SSH authentication:**
+   ```bash
+   cd /homeassistant
+   git remote -v  # Verify remote URL uses SSH
+   ssh -T git@github.com  # Test SSH connection
+   ```
+
+2. **Pull latest changes first:**
+   ```bash
+   git pull origin main
+   # Resolve any merge conflicts
+   git push origin main
+   ```
+
+3. **Check backup script logs:**
+   ```bash
+   # If using automated backup, check for error messages
+   /config/shell_scripts/github_backup.sh
+   ```
 
 ## Reference Documentation
 

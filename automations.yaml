@@ -32,7 +32,7 @@
 - id: '1707881038946'
   alias: Andy - Driving Flag Turn ON
   triggers:
-  - value_template: '{{states("sensor.andys_iphone_15_zone_distance") | float > 2}}'
+  - value_template: '{{states("sensor.andys_iphone_15_zone_distance") | float(default=999) > 2}}'
     trigger: template
   conditions:
   - condition: state
@@ -54,7 +54,7 @@
   alias: Andy - Far Away Flag, Turn OFF
   description: ''
   triggers:
-  - value_template: '{{states("sensor.andys_iphone_15_zone_distance") | float <= 5}}'
+  - value_template: '{{states("sensor.andys_iphone_15_zone_distance") | float(default=999) <= 5}}'
     trigger: template
   conditions:
   - alias: Confirm Andy ZoneDistance:FromZone is home
@@ -84,7 +84,7 @@
   alias: Andy - Far Away Flag, Turn ON
   description: ''
   triggers:
-  - value_template: '{{states("sensor.andys_iphone_15_zone_distance") | float > 5}}'
+  - value_template: '{{states("sensor.andys_iphone_15_zone_distance") | float(default=999) > 5}}'
     trigger: template
   conditions:
   - condition: device
@@ -190,7 +190,7 @@
   alias: Shannon - Driving Flag Turn ON
   description: ''
   triggers:
-  - value_template: '{{states("sensor.shannons_iphone_16_zone_distance") | float >
+  - value_template: '{{states("sensor.shannons_iphone_16_zone_distance") | float(default=999) >
       2}}'
     trigger: template
   conditions:
@@ -1110,7 +1110,7 @@
   description: Open Garage when Arriving Home
   triggers:
   - alias: When Andy is less than 0.10 km of Home
-    value_template: '{{states("sensor.andys_iphone_15_zone_distance")  | float <=
+    value_template: '{{states("sensor.andys_iphone_15_zone_distance")  | float(default=999) <=
       0.10}}'
     trigger: template
     id: When Andy is less than 0.10 km of Home
@@ -1328,7 +1328,7 @@
   description: Open Garage when Arriving Home
   triggers:
   - alias: When Shannon is less than 0.10 km of Home
-    value_template: '{{states("sensor.shannons_iphone_16_zone_distance")  | float
+    value_template: '{{states("sensor.shannons_iphone_16_zone_distance")  | float(default=999)
       <= 0.10}}'
     trigger: template
     id: When Shannon is less than 0.10 km of Home
@@ -1416,7 +1416,7 @@
   description: ''
   triggers:
   - alias: When Shannon is less than 0.10 km of Home
-    value_template: '{{states("sensor.shannons_iphone_icv3_zone_distance")  | float
+    value_template: '{{states("sensor.shannons_iphone_icv3_zone_distance")  | float(default=999)
       <= 0.10}}'
     trigger: template
     id: When Shannon is less than 0.10 km of Home
