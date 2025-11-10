@@ -2,6 +2,8 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+**Important:** Proactively update this file whenever you learn something new about the repository, discover useful patterns, encounter specific quirks, or receive instructions from the user that would help future Claude instances work more effectively in this codebase.
+
 ## Overview
 
 This is a personal Home Assistant configuration repository running on Home Assistant OS 16.3. The configuration manages smart home devices, automations, and integrations across multiple rooms and systems including Lutron Caseta, Philips Hue, Zigbee, Z-Wave, and various custom integrations.
@@ -226,6 +228,31 @@ Automations follow these patterns:
 - Test automations with `ha core check` before applying
 - Use template conditions for complex logic (e.g., `{{states("sensor.example") | float > 2}}`)
 - Device IDs are used for Zigbee/Z-Wave devices (e.g., `device_id: 34c5a970e762b6fecf8c234195cc58fa`)
+
+**Automation naming convention:**
+- Format: `{Room Name} - {Quick General Usecase of Automation}`
+- Examples:
+  - `Guest Bedroom - Fan Lightbulb Toggle On/Off`
+  - `Master Bedroom - Bed Frame Button for Ambient Lighting`
+  - `Kitchen - Pantry Motion Activated Lighting`
+- Keep names concise but descriptive enough to understand purpose at a glance
+
+**Philips Hue effect quirk:**
+- **DO NOT** use `light.toggle` with `effect` parameter - causes 400 Bad Request errors
+- **DO NOT** set `brightness_pct` and `effect` together in `light.turn_on` - Hue bridge rejects this
+- **CORRECT approach** for effects: Turn light on first, then apply effect in separate command
+  ```yaml
+  - action: light.turn_on
+    target:
+      entity_id: light.example
+  - delay:
+      milliseconds: 100
+  - action: light.turn_on
+    data:
+      effect: fire
+    target:
+      entity_id: light.example
+  ```
 
 ### Secrets Management
 
