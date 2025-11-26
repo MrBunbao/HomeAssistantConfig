@@ -32,7 +32,8 @@
 - id: '1707881038946'
   alias: Andy - Driving Flag Turn ON
   triggers:
-  - value_template: '{{states("sensor.andys_iphone_15_zone_distance") | float(default=999) > 2}}'
+  - value_template: '{{states("sensor.andys_iphone_15_zone_distance") | float(default=999)
+      > 2}}'
     trigger: template
   conditions:
   - condition: state
@@ -54,7 +55,8 @@
   alias: Andy - Far Away Flag, Turn OFF
   description: ''
   triggers:
-  - value_template: '{{states("sensor.andys_iphone_15_zone_distance") | float(default=999) <= 5}}'
+  - value_template: '{{states("sensor.andys_iphone_15_zone_distance") | float(default=999)
+      <= 5}}'
     trigger: template
   conditions:
   - alias: Confirm Andy ZoneDistance:FromZone is home
@@ -84,7 +86,8 @@
   alias: Andy - Far Away Flag, Turn ON
   description: ''
   triggers:
-  - value_template: '{{states("sensor.andys_iphone_15_zone_distance") | float(default=999) > 5}}'
+  - value_template: '{{states("sensor.andys_iphone_15_zone_distance") | float(default=999)
+      > 5}}'
     trigger: template
   conditions:
   - condition: device
@@ -190,8 +193,8 @@
   alias: Shannon - Driving Flag Turn ON
   description: ''
   triggers:
-  - value_template: '{{states("sensor.shannons_iphone_16_zone_distance") | float(default=999) >
-      2}}'
+  - value_template: '{{states("sensor.shannons_iphone_16_zone_distance") | float(default=999)
+      > 2}}'
     trigger: template
   conditions:
   - condition: state
@@ -763,39 +766,6 @@
     entity_id: fcb0463d2729e6e7220320a70e1cb0a6
     type: brightness_decrease
   mode: single
-- id: '1755380838983'
-  alias: Andys Office Smart Knob - Toggle Chaise Light
-  description: ''
-  triggers:
-  - domain: mqtt
-    device_id: e1eeb2160ec22ebcf33654ea89e3b72a
-    type: action
-    subtype: single
-    trigger: device
-  conditions: []
-  actions:
-  - type: toggle
-    device_id: 65fd2c817e01b5b2e11db9e3b0a4ec37
-    entity_id: fcb0463d2729e6e7220320a70e1cb0a6
-    domain: light
-  mode: single
-- id: '1755381671948'
-  alias: Andy's Office Smart Knob - Toggle Scenes (Double Press)
-  description: ''
-  triggers:
-  - domain: mqtt
-    device_id: e1eeb2160ec22ebcf33654ea89e3b72a
-    type: action
-    subtype: double
-    trigger: device
-  conditions: []
-  actions:
-  - action: script.turn_on
-    metadata: {}
-    data: {}
-    target:
-      entity_id: script.andy_s_office_scene_toggle
-  mode: single
 - id: '1755383469676'
   alias: Laundry Room - Dryer Cycle Started
   description: Starts when vibration is ON for ≥30s; sets dryer_running and notifies
@@ -816,6 +786,17 @@
     condition: template
     value_template: '{{ (as_timestamp(now()) - as_timestamp(this.attributes.last_triggered
       or 0)) > 15*60 }}'
+  - condition: time
+    after: 09:00:00
+    before: '21:00:00'
+    weekday:
+    - sun
+    - mon
+    - tue
+    - wed
+    - thu
+    - fri
+    - sat
   actions:
   - action: input_boolean.turn_on
     data: {}
@@ -882,6 +863,17 @@
   - condition: state
     entity_id: input_boolean.dryer_running
     state: 'on'
+  - condition: time
+    after: 09:00:00
+    before: '21:00:00'
+    weekday:
+    - sun
+    - mon
+    - tue
+    - wed
+    - thu
+    - fri
+    - sat
   actions:
   - target:
       entity_id: input_boolean.dryer_running
@@ -1110,8 +1102,8 @@
   description: Open Garage when Arriving Home
   triggers:
   - alias: When Andy is less than 0.10 km of Home
-    value_template: '{{states("sensor.andys_iphone_15_zone_distance")  | float(default=999) <=
-      0.10}}'
+    value_template: '{{states("sensor.andys_iphone_15_zone_distance")  | float(default=999)
+      <= 0.10}}'
     trigger: template
     id: When Andy is less than 0.10 km of Home
   - entity_id:
@@ -1792,7 +1784,7 @@
     domain: light
   mode: single
 - id: '1762752641193'
-  alias: Master Bedroom - Bed Frame Button for Ambient Lighting
+  alias: Master Bedroom - Shannon Side Table Button Toggle Lamp
   description: ''
   triggers:
   - domain: mqtt
@@ -1802,27 +1794,175 @@
     trigger: device
   conditions: []
   actions:
+  - action: light.toggle
+    metadata: {}
+    data: {}
+    target:
+      entity_id: light.master_bedroom_shannon_side_table_lamp_light
+  mode: single
+- id: '1763366309000'
+  alias: Andys Office Z-KNOB1 Toggle Honolulu 2 Scene
+  description: Toggle Honolulu 2 scene using Z-KNOB1
+  triggers:
+  - trigger: state
+    entity_id:
+    - event.andys_office_z_knob1_action
+    attribute: event_type
+    to: toggle
+  conditions: []
+  actions:
   - choose:
     - conditions:
       - condition: state
-        entity_id: light.master_bedroom_bed_frame_ambient_lighting
-        state: 'off'
+        entity_id: light.andys_office
+        state: 'on'
+      sequence:
+      - action: light.turn_off
+        metadata: {}
+        data: {}
+        target:
+          entity_id:
+          - light.andys_office
+          - light.nanoleaf_light_panels
+    default:
+    - action: scene.turn_on
+      metadata: {}
+      data: {}
+      target:
+        entity_id: scene.andys_office_room_from_hue_app_honolulu_2
+    - action: light.turn_on
+      metadata: {}
+      data: {}
+      target:
+        entity_id: light.nanoleaf_light_panels
+  mode: single
+- id: '1763366400000'
+  alias: Andys Office - Closet Occupancy Light Control
+  description: Combined automation for closet lighting with state restoration
+  triggers:
+  - type: occupied
+    device_id: 637ad5d0590dfb7c8b79c4eebee66cb6
+    entity_id: 3be126da7c6c8e7dc357891f6da74198
+    domain: binary_sensor
+    trigger: device
+    id: occupied
+  - type: not_occupied
+    device_id: 637ad5d0590dfb7c8b79c4eebee66cb6
+    entity_id: 3be126da7c6c8e7dc357891f6da74198
+    domain: binary_sensor
+    trigger: device
+    id: not_occupied
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - occupied
       sequence:
       - action: light.turn_on
         metadata: {}
-        target:
-          entity_id: light.master_bedroom_bed_frame_ambient_lighting
-      - delay:
-          milliseconds: 100
-      - action: light.turn_on
-        metadata: {}
         data:
-          effect: fire
+          color_temp_kelvin: 3235
+          brightness_pct: 100
         target:
-          entity_id: light.master_bedroom_bed_frame_ambient_lighting
+          entity_id: light.andys_office_closet_hue_light_strip
     default:
+    - delay:
+        hours: 0
+        minutes: 0
+        seconds: 30
+        milliseconds: 0
     - action: light.turn_off
       metadata: {}
+      data: {}
       target:
-        entity_id: light.master_bedroom_bed_frame_ambient_lighting
+        entity_id: light.andys_office_closet_hue_light_strip
+  mode: single
+- id: '1763625683091'
+  alias: Master Bedroom Under Bed Light ON If Out Of Bed
+  description: ''
+  triggers:
+  - type: not_occupied
+    device_id: 012c23a14356a893867e78bc32f0affe
+    entity_id: 6784833ffbdca04cb2f43e31884b8214
+    domain: binary_sensor
+    trigger: device
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 2
+  conditions:
+  - condition: time
+    after: '21:00:00'
+    before: 08:00:00
+  actions:
+  - action: light.turn_on
+    metadata: {}
+    data:
+      brightness_pct: 15
+      color_temp_kelvin: 2000
+      color_temp: 500
+    target:
+      entity_id: light.zigbee_led_strip_controller_3_0
+  mode: single
+- id: '1763625796183'
+  alias: Master Bedroom Turn Off Bed Light When Occupied
+  description: ''
+  triggers:
+  - type: occupied
+    device_id: 012c23a14356a893867e78bc32f0affe
+    entity_id: cb4aa4960392d7aa25fa43cf0cbe232c
+    domain: binary_sensor
+    trigger: device
+  conditions:
+  - condition: time
+    after: '23:00:00'
+    before: 08:00:00
+  actions:
+  - action: light.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: light.zigbee_led_strip_controller_3_0
+  - if: []
+    then: []
+  mode: single
+- id: '1763930481200'
+  alias: Master Bedroom - Shannon Mini Button Double Press Toggle Candle Warmer
+  description: ''
+  triggers:
+  - domain: mqtt
+    device_id: 7cda4eeba29a30c491e7fc40c6bda217
+    type: action
+    subtype: double
+    trigger: device
+  conditions: []
+  actions:
+  - action: light.toggle
+    metadata: {}
+    data: {}
+    target:
+      entity_id: light.switchbot_candle_warmer_lamp_2
+  mode: single
+- id: '1763930631089'
+  alias: Master Bedroom - Shannon Side Table Buttom HOLD to Turn Off All Bedroom Lights
+  description: ''
+  triggers:
+  - domain: mqtt
+    device_id: 7cda4eeba29a30c491e7fc40c6bda217
+    type: action
+    subtype: hold
+    trigger: device
+  conditions: []
+  actions:
+  - action: light.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id:
+      - light.master_bedroom_fairy_lights
+      - light.switchbot_candle_warmer_lamp_2
+      - light.master_bedroom_shannon_side_table_lamp_light
+      - light.master_bedroom_lights
   mode: single

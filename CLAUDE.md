@@ -9,7 +9,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 This is a personal Home Assistant configuration repository running on Home Assistant OS 16.3. The configuration manages smart home devices, automations, and integrations across multiple rooms and systems including Lutron Caseta, Philips Hue, Zigbee, Z-Wave, and various custom integrations.
 
 **Key Paths:**
-- Configuration root: `/homeassistant` (symlinked to `/root/config`)
+- Configuration root: `/homeassistant` (symlinked to `/config`)
 - Working directory: `/root` (SSH default)
 - Repository: https://github.com/MrBunbao/HomeAssistantConfig
 

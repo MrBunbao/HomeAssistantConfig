@@ -180,3 +180,59 @@
       state: 'on'
   icon: mdi:sun-snowflake
   metadata: {}
+- id: '1763284167983'
+  name: Master Bedroom Ambiance
+  entities:
+    light.zigbee_led_strip_controller_3_0:
+      min_color_temp_kelvin: 2000
+      max_color_temp_kelvin: 6535
+      min_mireds: 153
+      max_mireds: 500
+      effect_list:
+      - blink
+      - breathe
+      - okay
+      - channel_change
+      - finish_effect
+      - stop_effect
+      - colorloop
+      - stop_colorloop
+      supported_color_modes:
+      - color_temp
+      - xy
+      effect:
+      color_mode: xy
+      brightness: 33
+      color_temp_kelvin:
+      color_temp:
+      hs_color:
+      - 37.537
+      - 79.608
+      rgb_color:
+      - 255
+      - 179
+      - 52
+      xy_color:
+      - 0.532
+      - 0.422
+      friendly_name: Zigbee LED Strip Controller 3.0
+      supported_features: 44
+      state: 'on'
+    select.0xa4c138a3dbc44ea2_effect:
+      options:
+      - blink
+      - breathe
+      - okay
+      - channel_change
+      - finish_effect
+      - stop_effect
+      - colorloop
+      - stop_colorloop
+      assumed_state: true
+      icon: mdi:palette
+      friendly_name: Zigbee LED Strip Controller 3.0 Effect
+      state: breathe
+    switch.zigbee_led_strip_controller_3_0_do_not_disturb:
+      friendly_name: Zigbee LED Strip Controller 3.0 Do not disturb
+      state: 'off'
+  metadata: {}

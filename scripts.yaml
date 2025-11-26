@@ -38,9 +38,9 @@ disney_cruise_chime_with_tts:
         media_content_type: audio/mpeg
         metadata:
           title: Shipboard Announcement - Disney Cruise Line [I-11Pk_iN2A].mp3
-          thumbnail:
+          thumbnail: null
           media_class: music
-          children_media_class:
+          children_media_class: null
           navigateIds:
           - {}
           - media_content_type: app
@@ -73,9 +73,9 @@ disney_cruise_chime_with_tts_wash_cycle_complete:
         media_content_type: audio/mpeg
         metadata:
           title: Shipboard Announcement - Disney Cruise Line [I-11Pk_iN2A].mp3
-          thumbnail:
+          thumbnail: null
           media_class: music
-          children_media_class:
+          children_media_class: null
           navigateIds:
           - {}
           - media_content_type: app
@@ -108,9 +108,9 @@ disney_cruise_chime_with_tts_dryer_cycle_complete:
         media_content_type: audio/mpeg
         metadata:
           title: Shipboard Announcement - Disney Cruise Line [I-11Pk_iN2A].mp3
-          thumbnail:
+          thumbnail: null
           media_class: music
-          children_media_class:
+          children_media_class: null
           navigateIds:
           - {}
           - media_content_type: app
@@ -144,9 +144,9 @@ disney_cruise_chime_with_tts_dryer_cycle_started:
         media_content_type: audio/mpeg
         metadata:
           title: Shipboard Announcement - Disney Cruise Line [I-11Pk_iN2A].mp3
-          thumbnail:
+          thumbnail: null
           media_class: music
-          children_media_class:
+          children_media_class: null
           navigateIds:
           - {}
           - media_content_type: app
@@ -179,9 +179,9 @@ disney_cruise_chime_with_tts_washer_cycle_started:
         media_content_type: audio/mpeg
         metadata:
           title: Shipboard Announcement - Disney Cruise Line [I-11Pk_iN2A].mp3
-          thumbnail:
+          thumbnail: null
           media_class: music
-          children_media_class:
+          children_media_class: null
           navigateIds:
           - {}
           - media_content_type: app
@@ -204,3 +204,31 @@ disney_cruise_chime_with_tts_washer_cycle_started:
         right away.
   alias: Disney Cruise Chime with TTS - Washer Cycle STARTED
   description: ''
+# DISABLED - References non-existent sensors (daily_energy_cost_circuit_*)
+# test_energy_notification:
+#   alias: Test Energy Notification
+#   sequence:
+#   - service: notify.mobile_app_andys_iphone_15
+#     data:
+#       title: Daily Energy Report (TEST)
+#       message: 'Time period: 12:00 AM - {{ now().strftime("%I:%M %p") }} ({{ now().strftime("%A,
+#         %B %d") }})
+#
+#
+#         Today''s energy usage: {{ states("sensor.total_daily_energy_usage") }} kWh
+#
+#
+#         Total cost: ${{ states("sensor.total_daily_energy_cost") }}
+#
+#
+#         Circuit 1: {{ states("sensor.daily_energy_cost_circuit_1") }} kWh
+#
+#         Circuit 3: {{ states("sensor.daily_energy_cost_circuit_3") }} kWh
+#
+#         Circuit 5: {{ states("sensor.daily_energy_cost_circuit_5") }} kWh
+#
+#         Circuit 7: {{ states("sensor.daily_energy_cost_circuit_7") }} kWh
+#
+#         '
+#   mode: single
+#   icon: mdi:test-tube

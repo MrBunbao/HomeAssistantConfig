@@ -86,6 +86,9 @@ panel_custom:
     require_admin: true
 
 input_boolean:
+  test_energy_notification:
+    name: Test Energy Notification
+    icon: mdi:test-tube
 
 wake_on_lan:
 
@@ -112,3 +115,32 @@ input_text:
 # GitHub Backup Shell Command
 shell_command:
   github_backup: /bin/bash /config/shell_scripts/github_backup.sh
+
+# Daily Energy Cost Tracking - REMOVED (source sensors don't exist)
+# If you need energy tracking, configure it with actual existing sensors
+
+# Template sensor for total daily energy cost - DISABLED (depends on removed utility meters)
+# template:
+#   - sensor:
+#       - name: Total Daily Energy Cost
+#         unique_id: total_daily_energy_cost
+#         unit_of_measurement: USD
+#         device_class: monetary
+#         state: >
+#           {% set circuit1 = states('sensor.daily_energy_cost_circuit_1') | float(0) %}
+#           {% set circuit3 = states('sensor.daily_energy_cost_circuit_3') | float(0) %}
+#           {% set circuit5 = states('sensor.daily_energy_cost_circuit_5') | float(0) %}
+#           {% set circuit7 = states('sensor.daily_energy_cost_circuit_7') | float(0) %}
+#           {% set total_kwh = circuit1 + circuit3 + circuit5 + circuit7 %}
+#           {% set cost_per_kwh = 0.11 %}
+#           {{ (total_kwh * cost_per_kwh) | round(2) }}
+#       - name: Total Daily Energy Usage
+#         unique_id: total_daily_energy_usage
+#         unit_of_measurement: kWh
+#         device_class: energy
+#         state: >
+#           {% set circuit1 = states('sensor.daily_energy_cost_circuit_1') | float(0) %}
+#           {% set circuit3 = states('sensor.daily_energy_cost_circuit_3') | float(0) %}
+#           {% set circuit5 = states('sensor.daily_energy_cost_circuit_5') | float(0) %}
+#           {% set circuit7 = states('sensor.daily_energy_cost_circuit_7') | float(0) %}
+#           {{ (circuit1 + circuit3 + circuit5 + circuit7) | round(2) }}
