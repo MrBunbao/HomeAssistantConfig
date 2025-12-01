@@ -170,7 +170,7 @@
   description: ''
   triggers:
   - entity_id:
-    - device_tracker.shannons_iphone_16
+    - device_tracker.shannons_iphone_icv3
     to: home
     for:
       hours: 0
@@ -193,13 +193,16 @@
   alias: Shannon - Driving Flag Turn ON
   description: ''
   triggers:
-  - value_template: '{{states("sensor.shannons_iphone_16_zone_distance") | float(default=999)
+  - value_template: '{{states("sensor.shannons_iphone_icv3_zone_distance") | float(default=999)
       > 2}}'
     trigger: template
   conditions:
   - condition: state
     entity_id: input_boolean.shannon_far_away_flag
     state: 'off'
+    enabled: false
+  - condition: template
+    value_template: '{{ states("device_tracker.shannons_iphone_icv3") != "home" }}'
   actions:
   - data: {}
     target:
@@ -211,15 +214,13 @@
   description: ''
   triggers:
   - entity_id:
-    - sensor.shannons_iphone_16_zone_distance
+    - sensor.shannons_iphone_icv3_zone_distance
     below: 5
     trigger: numeric_state
   conditions:
-  - condition: device
-    device_id: df19306cbd4c5d127e82ad062311fecb
-    domain: device_tracker
-    entity_id: fd53eec106c4955684128dc13335d790
-    type: is_home
+  - condition: template
+    value_template: '{{ states("device_tracker.shannons_iphone_icv3") == "home" or
+      states("sensor.shannons_iphone_icv3_zone_name") == "Home" }}'
   actions:
   - alias: 'Shannon Far Away Flag: Turn off'
     data: {}
@@ -233,15 +234,13 @@
   triggers:
   - alias: When Shannon Zone Distance is above 5 mi
     entity_id:
-    - sensor.shannons_iphone_16_zone_distance
+    - sensor.shannons_iphone_icv3_zone_distance
     above: 5
     trigger: numeric_state
   conditions:
-  - condition: device
-    device_id: df19306cbd4c5d127e82ad062311fecb
-    domain: device_tracker
-    entity_id: fd53eec106c4955684128dc13335d790
-    type: is_not_home
+  - condition: template
+    value_template: '{{ states("device_tracker.shannons_iphone_icv3") != "home" or
+      states("sensor.shannons_iphone_icv3_zone_name") != "Home" }}'
   actions:
   - alias: 'Shannon Far Away Flag: Turn on'
     data: {}
@@ -284,9 +283,9 @@
             media_content_type: audio/mpeg
             metadata:
               title: Shipboard Announcement - Disney Cruise Line [I-11Pk_iN2A].mp3
-              thumbnail:
+              thumbnail: null
               media_class: music
-              children_media_class:
+              children_media_class: null
               navigateIds:
               - {}
               - media_content_type: app
@@ -328,9 +327,9 @@
             media_content_type: audio/mpeg
             metadata:
               title: Shipboard Announcement - Disney Cruise Line [I-11Pk_iN2A].mp3
-              thumbnail:
+              thumbnail: null
               media_class: music
-              children_media_class:
+              children_media_class: null
               navigateIds:
               - {}
               - media_content_type: app
@@ -816,9 +815,9 @@
         media_content_type: audio/mpeg
         metadata:
           title: Shipboard Announcement - Disney Cruise Line [I-11Pk_iN2A].mp3
-          thumbnail:
+          thumbnail: null
           media_class: music
-          children_media_class:
+          children_media_class: null
           navigateIds:
           - {}
           - media_content_type: app
@@ -898,9 +897,9 @@
         media_content_type: audio/mpeg
         metadata:
           title: Shipboard Announcement - Disney Cruise Line [I-11Pk_iN2A].mp3
-          thumbnail:
+          thumbnail: null
           media_class: music
-          children_media_class:
+          children_media_class: null
           navigateIds:
           - {}
           - media_content_type: app
@@ -1158,8 +1157,8 @@
         - Parking complete. Door’s on standby.
         - Welcome home—executing garage sequence.
         last: '{{ states(''input_text.last_arrival_msg'') }}'
-        msg: "{{\n  (greetings | reject('equalto', last) | list | random)\n  if last
-          in greetings\n  else (greetings | random)\n}}"
+        msg: "{{\n  (greetings | reject('equalto', last) | list | random)\n  if last\
+          \ in greetings\n  else (greetings | random)\n}}"
     - action: notify.mobile_app_andys_iphone_15
       data:
         title: '{{ titles | random }}'
@@ -1320,12 +1319,12 @@
   description: Open Garage when Arriving Home
   triggers:
   - alias: When Shannon is less than 0.10 km of Home
-    value_template: '{{states("sensor.shannons_iphone_16_zone_distance")  | float(default=999)
+    value_template: '{{states("sensor.shannons_iphone_icv3_zone_distance") | float(default=999)
       <= 0.10}}'
     trigger: template
     id: When Shannon is less than 0.10 km of Home
   - entity_id:
-    - device_tracker.shannons_iphone_16
+    - device_tracker.shannons_iphone_icv3
     to: Home
     trigger: state
   conditions:
@@ -1356,52 +1355,88 @@
         late_msgs:
         - Hey sleepyhead, it’s late. Let’s not wake the neighbors. I’ll keep the garage
           closed. Love you. ❤️
-        - "Shhh, it’s bedtime hours. Garage stays shut for safety, baby. \U0001F618"
-        - "It’s too late to open the garage, babe. Get some rest, I’ve got you. \U0001F495"
+        - Shhh, it’s bedtime hours. Garage stays shut for safety, baby. 😘
+        - It’s too late to open the garage, babe. Get some rest, I’ve got you. 💕
         late_pick: '{{ late_msgs | random }}'
     - device_id: ea43a98b40abfb7c7c331ee5be5f2710
       domain: mobile_app
       type: notify
       message: '{{ late_pick }}'
     else:
-    - variables:
-        titles:
-        - Hi my love
-        - Hello gorgeous
-        - My sweet baby
-        - Love of my life
-        - My forever girl
-        - Hey beautiful soul
-        - My precious Shannon
-        - The reason my heart beats
-        greetings:
-        - You’re home, baby — my heart just got complete again. ❤️
-        - "My love, every arrival feels like the best gift. \U0001F381"
-        - "The world feels right again because you’re here, Shannon. \U0001F30E\U0001F495"
-        - "You’re the melody my life was missing — welcome home, baby. \U0001F3B6"
-        - My baby’s home! Life just got brighter. ☀️
-        - "Every time I see you walk in, I fall in love again. \U0001F496"
-        - "Baby, your presence is my favorite comfort. \U0001F917"
-        - Shannon, my love, you are my always and forever. ♾️
-        - "Garage is opening, but it’s my arms that want to hold you. \U0001F970"
-        - "My queen is home — I love you endlessly. \U0001F451❤️"
-        last: '{{ states(''input_text.last_arrival_msg'') }}'
-        msg: "{{\n  (greetings | reject('equalto', last) | list | random)\n  if last
-          in greetings\n  else (greetings | random)\n}}"
-    - action: notify.mobile_app_shannons_iphone
-      data:
-        message: '{{ msg }}'
-        title: '{{ titles | random }}'
-    - action: input_text.set_value
-      data:
-        entity_id: input_text.last_arrival_msg
-        value: '{{ msg }}'
-    - alias: Open Garage
-      action: cover.open_cover
-      data: {}
-      target:
-        entity_id: cover.smart_garage_door_2310087254725461070248e1e9dd51a3_garage
-      enabled: true
+    - alias: Reboot Safety Check for Shannon Arrival
+      if:
+      - condition: template
+        value_template: '{{ (states("sensor.home_assistant_uptime") | float(0) * 60)
+          > 5 }}'
+        alias: Home Assistant has been running for at least 5 minutes
+      - condition: template
+        value_template: '{{ states("device_tracker.shannons_iphone_icv3") not in ["unknown",
+          "unavailable"] or states("sensor.shannons_iphone_icv3_zone_name") not in
+          ["unknown", "unavailable"] }}'
+        alias: Shannon's device tracker is reporting valid location
+      then:
+      - action: shell_command.get_github_compliment
+        response_variable: github_compliment_response
+      - variables:
+          github_response: '{{ github_compliment_response.stdout | trim }}'
+          github_parts: '{{ github_response.split("|||") }}'
+          github_title: '{{ github_parts[0] if github_parts | length > 0 else "" }}'
+          github_compliment: '{{ github_parts[1] if github_parts | length > 1 else
+            "" }}'
+          fallback_titles:
+          - Hi my love
+          - Hello gorgeous
+          - My sweet baby
+          - Love of my life
+          - My forever girl
+          - Hey beautiful soul
+          - My precious Shannon
+          - The reason my heart beats
+          titles:
+          - '{{ github_title if github_title else (fallback_titles | random) }}'
+          greetings:
+          - '{{ github_compliment if github_compliment else "Welcome home, my love!
+            💕" }}'
+          - You're home, baby — my heart just got complete again. ❤️
+          - My love, every arrival feels like the best gift. 🎁
+          - The world feels right again because you're here, Shannon. 🌎💕
+          - You're the melody my life was missing — welcome home, baby. 🎶
+          - My baby's home! Life just got brighter. ☀️
+          - Every time I see you walk in, I fall in love again. 💖
+          - Baby, your presence is my favorite comfort. 🤗
+          - Shannon, my love, you are my always and forever. ♾️
+          - Garage is opening, but it's my arms that want to hold you. 🥰
+          - My queen is home — I love you endlessly. 👑❤️
+          last: '{{ states(''input_text.last_arrival_msg'') }}'
+          msg: "{{\n  (greetings | reject('equalto', last) | list | random)\n  if\
+            \ last in greetings\n  else (greetings | random)\n}}"
+      - action: notify.mobile_app_shannons_iphone
+        data:
+          message: '{{ msg }}'
+          title: '{{ titles | random }}'
+        alias: Send loving compliment to Shannon
+      - action: input_text.set_value
+        data:
+          entity_id: input_text.last_arrival_msg
+          value: '{{ msg }}'
+      - action: cover.open_cover
+        data: {}
+        target:
+          entity_id: cover.smart_garage_door_2310087254725461070248e1e9dd51a3_garage
+        alias: Open Garage Door
+      - action: notify.mobile_app_andys_iphone_15
+        data:
+          title: Shannon is Home 💕
+          message: '{{ msg }}'
+        alias: Notify Andy that Shannon arrived
+      else:
+      - action: notify.mobile_app_andys_iphone_15
+        data:
+          title: 🚨 Garage Safety Check Prevented False Trigger
+          message: Shannon automation triggered but was blocked - HA was recently
+            rebooted ({{ states('sensor.home_assistant_uptime') | float(0) | round(1)
+            }} hours uptime). This prevented a false garage opening.
+        alias: Notify Andy only about prevented false trigger
   mode: single
 - id: '1761448213295'
   alias: Proposal Day
@@ -1444,8 +1479,8 @@
         late_msgs:
         - Hey sleepyhead, it’s late. Let’s not wake the neighbors. I’ll keep the garage
           closed. Love you. ❤️
-        - "Shhh, it’s bedtime hours. Garage stays shut for safety, baby. \U0001F618"
-        - "It’s too late to open the garage, babe. Get some rest, I’ve got you. \U0001F495"
+        - Shhh, it’s bedtime hours. Garage stays shut for safety, baby. 😘
+        - It’s too late to open the garage, babe. Get some rest, I’ve got you. 💕
         late_pick: '{{ late_msgs | random }}'
     - device_id: ea43a98b40abfb7c7c331ee5be5f2710
       domain: mobile_app
@@ -1464,18 +1499,18 @@
         - The reason my heart beats
         greetings:
         - You’re home, baby — my heart just got complete again. ❤️
-        - "My love, every arrival feels like the best gift. \U0001F381"
-        - "The world feels right again because you’re here, Shannon. \U0001F30E\U0001F495"
-        - "You’re the melody my life was missing — welcome home, baby. \U0001F3B6"
+        - My love, every arrival feels like the best gift. 🎁
+        - The world feels right again because you’re here, Shannon. 🌎💕
+        - You’re the melody my life was missing — welcome home, baby. 🎶
         - My baby’s home! Life just got brighter. ☀️
-        - "Every time I see you walk in, I fall in love again. \U0001F496"
-        - "Baby, your presence is my favorite comfort. \U0001F917"
+        - Every time I see you walk in, I fall in love again. 💖
+        - Baby, your presence is my favorite comfort. 🤗
         - Shannon, my love, you are my always and forever. ♾️
-        - "Garage is opening, but it’s my arms that want to hold you. \U0001F970"
-        - "My queen is home — I love you endlessly. \U0001F451❤️"
+        - Garage is opening, but it’s my arms that want to hold you. 🥰
+        - My queen is home — I love you endlessly. 👑❤️
         last: '{{ states(''input_text.last_arrival_msg'') }}'
-        msg: "{{\n  (greetings | reject('equalto', last) | list | random)\n  if last
-          in greetings\n  else (greetings | random)\n}}"
+        msg: "{{\n  (greetings | reject('equalto', last) | list | random)\n  if last\
+          \ in greetings\n  else (greetings | random)\n}}"
       enabled: true
     - action: notify.mobile_app_shannons_iphone
       data:
@@ -1584,7 +1619,7 @@
   actions:
   - action: notify.mobile_app_andys_iphone_15
     data:
-      title: "\U0001F31F CPAP Success!"
+      title: 🌟 CPAP Success!
       message: YAY
   - action: notify.mobile_app_shannons_iphone
     data:
@@ -1668,9 +1703,9 @@
             media_content_type: audio/mpeg
             metadata:
               title: Shipboard Announcement - Disney Cruise Line [I-11Pk_iN2A].mp3
-              thumbnail:
+              thumbnail: null
               media_class: music
-              children_media_class:
+              children_media_class: null
               navigateIds:
               - {}
               - media_content_type: app
@@ -1709,9 +1744,9 @@
             media_content_type: audio/mpeg
             metadata:
               title: Shipboard Announcement - Disney Cruise Line [I-11Pk_iN2A].mp3
-              thumbnail:
+              thumbnail: null
               media_class: music
-              children_media_class:
+              children_media_class: null
               navigateIds:
               - {}
               - media_content_type: app
@@ -1965,4 +2000,30 @@
       - light.switchbot_candle_warmer_lamp_2
       - light.master_bedroom_shannon_side_table_lamp_light
       - light.master_bedroom_lights
+  mode: single
+- id: '1764547974446'
+  alias: Notify Laundry Room Washer Plug was turned off (but turned back on).
+  description: ''
+  triggers:
+  - type: turned_off
+    device_id: 74ed80190bbb9a784115ee3f8d0b8cd0
+    entity_id: 681a27962ae27518c065c6438e63de27
+    domain: switch
+    trigger: device
+  conditions: []
+  actions:
+  - type: turn_on
+    device_id: 74ed80190bbb9a784115ee3f8d0b8cd0
+    entity_id: 681a27962ae27518c065c6438e63de27
+    domain: switch
+  - action: notify.mobile_app_andys_iphone_15
+    metadata: {}
+    data:
+      title: Laundry Plug was turned off.
+      message: But no worries son. I turned it back on for you. ❤️
+  - action: notify.mobile_app_shannons_iphone
+    metadata: {}
+    data:
+      title: Laundry Plug was turned off.
+      message: But no worries my Daughter. I turned it back on for you. ❤️
   mode: single

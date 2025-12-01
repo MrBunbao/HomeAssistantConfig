@@ -144,3 +144,20 @@ shell_command:
 #           {% set circuit5 = states('sensor.daily_energy_cost_circuit_5') | float(0) %}
 #           {% set circuit7 = states('sensor.daily_energy_cost_circuit_7') | float(0) %}
 #           {{ (circuit1 + circuit3 + circuit5 + circuit7) | round(2) }}
+
+# GitHub-Powered Compliments for Shannon 💕
+sensor:
+  - platform: command_line
+    name: github_compliments_raw
+    command: "curl -s 'https://raw.githubusercontent.com/MrBunbao/daily-love-notes/main/compliments.json'"
+    scan_interval: 3600
+    value_template: '{{ value_json | length }}'
+
+# Shell command to get random compliment from GitHub
+shell_command:
+  get_github_compliment: 'python3 /config/python_scripts/get_random_compliment.py'
+
+# System Monitor for Uptime Tracking
+sensor:
+  - platform: uptime
+    name: Home Assistant Uptime
